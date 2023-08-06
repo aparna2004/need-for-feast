@@ -1,0 +1,50 @@
+{%load static%}
+
+<link rel='stylesheet' href="{%static 'styles/order.css'%}" />
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>
+                Select
+            </th>
+            <th>
+                Image
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Price
+            </th> 
+            <th>
+                Quantity
+            </th>
+        </tr>
+    
+        {% for item in items %}
+            <tr>
+                <td >
+                    <input id="showQuantity" type="checkbox" name="item_list" value="{{item.pk}}" />
+                </td>
+                <td>
+                    <img src="{{item.image.url }}" / >
+                </td>
+                <td> 
+                    {{item.name}}
+                </td>
+                
+                <td> 
+                    {{item.price}}
+                </td>
+                
+                <td >         
+                    <input type="number" name="quantity_list" value="{{item.quantity}}" />
+                </td>
+            
+            </tr>
+        {% endfor %}
+    </table>
+    <button> Submit </button>
+</form>
+

@@ -1,0 +1,20 @@
+{%load static%}
+
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+</head>
+<title>Need for feast</title>
+<body>
+    {%if messages%}
+    <ul>
+        {% for message in messages %}
+            <li>{{message}}</li>
+        {%endfor%}  
+    </ul>
+    {% endif %}
+
+    {% block content %}
+    {% endblock content %}
+
+</body>

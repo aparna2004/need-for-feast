@@ -1,7 +1,16 @@
-{%extends 'main.html'%}
+{%load static%}
+<head>
+    <link rel='stylesheet' href="{%static 'styles/style.css'%}" />
+</head>
+<img src="{%static 'images/logo.jpg'%}" />
 
-{%block content%}
+{%if messages%}
+{% for message in messages %}
+    <p>{{message}}</p>
+{%endfor%}
+{% endif %}
+
 <a href = "{% url 'order'%}">
     Click here to place your order!
 </a>
-{%endblock content%}
+

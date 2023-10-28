@@ -1,13 +1,26 @@
 {% extends 'main.html'%}
-{%block content%}
-{%load static%}
+{% block content %}
+{% load static %}
 <div class="home-content-wrapper">
     <br>
 
     <a class="order-link" href = "{% url 'order'%}">
         Place order
     </a>
-    {%include 'footer.html'%}
+
+    {% if request.user.is_authenticated %}
+        <a href = "{% url 'logout' %}">
+            Logout
+        </a>
+
+    {% else %}
+        <a href = "{% url 'login' %}">
+            Login
+        </a>
+    {% endif %}
+
+    {% include 'footer.html' %}
+
 </div>
 
 

@@ -6,22 +6,21 @@
 </head>
 <title>Need for feast</title>
 <body>
-    <a href = '/'>
-        <img src = "">
-    </a>
-    
-    {%if messages%}
-    <ul>
-        {% for message in messages %}
-            <li>{{message}}</li>
-        {%endfor%}  
-    </ul>
-    {% endif %}
+    <div class = 'main-body'>
+        <a href = '/'>
+            <img src = " {%static 'images/fav.jpg'%}" class = 'logo'>
+        </a>
+        
+        {%if messages%}
+        <ul>
+            {% for message in messages %}
+                <li>{{message}}</li>
+            {%endfor%}  
+        </ul>
+        {% endif %}
 
-    {% block content %}
-    {% endblock content %}
-    <a href = '/'>
-        <img src = "">
-    </a>
+        {% block content %}
+        {% endblock content %}
+    </div>    
 
 </body>

@@ -6,10 +6,14 @@
 </head>
 <title>Need for feast</title>
 <body>
-    <div class = 'main-body'>
+    
+    <div class = 'main-body' >
+        
         <a href = '/'>
             <img src = " {%static 'images/fav.jpg'%}" class = 'logo'>
         </a>
+
+        
         
         {%if messages%}
         <ul>
@@ -21,6 +25,8 @@
 
         {% block content %}
         {% endblock content %}
-    </div>    
+    </div>   
+    
+ 
 
 </body>

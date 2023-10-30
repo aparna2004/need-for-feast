@@ -4,57 +4,80 @@
     Need for feast!
 </title>
 <head>
-    <link rel='stylesheet' href="{%static 'styles/order.css'%}" />
+    <link rel='stylesheet' href="{%static 'styles/style.css'%}" />
     <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
 
 </head>
 <body>
 
-    {%if messages%}
-    <ul>
-        {% for message in messages %}
-            <li>{{message}}</li>
-        {%endfor%}
-    </ul>
-    {% endif %}
+    <div style='background-image: url("../images/order.jpg"); background-size: 100% 100%;
+    opacity: 80%;
+    height:100vh;'>
+        <a href = '/'>
+            <img src = " {%static 'images/fav.jpg'%}" class = 'logo'>
+        </a>
 
-    <form method="POST">
-        {% csrf_token %}
-        <table>
-            <tr>
-                <th> Select </th>
-                <th> Image </th>
-                <th> Item Name </th>
-                <th> Price </th> 
-                <th> Quantity </th>
-            </tr>
+        <div class = "order-container">
+
+            <div class = "table-container">
+                {%if messages%}
+            <ul>
+                {% for message in messages %}
+                    <li>{{message}}</li>
+                {%endfor%}
+            </ul>
+            {% endif %}
         
-            {% for item in items %}
-                <tr>
-                    <td > <input type="checkbox" name="item_list" value="{{item.pk}}" /> </td>
-                    <td> <img class="menu-item-image" src="{{item.image.url }}" width="60px" height="60px"/> </td>
-                    <td> {{item.name}} </td>
-                    <td> {{item.price}} </td>
-                    <td > <input type="number" name="quantity_list" value="{{item.quantity}}" /> </td>
+            <form method="POST">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <th> Select </th>
+                        <th> Image </th>
+                        <th> Item Name </th>
+                        <th> Price </th> 
+                        <th> Quantity </th>
+                    </tr>
                 
-                </tr>
-            {% endfor %}
-        </table>
-        <button> Submit </button>
-    </form>
-    <br>
-    Developed by  
-    <a href="https://github.com/Hariish-A">
+                    {% for item in items %}
+                        <tr>
+                            <td > <input type="checkbox" name="item_list" value="{{item.pk}}" /> </td>
+                            <td> <img class="menu-item-image" src="{{item.image.url }}" width="60px" height="60px"/> </td>
+                            <td> {{item.name}} </td>
+                            <td> {{item.price}} </td>
+                            <td > <input type="number" name="quantity_list" value="{{item.quantity}}" /> </td>
+                        
+                        </tr>
+                    {% endfor %}
+                </table>
+                <button> Submit </button>
+            </form>
+            <br>
+            </div>
+            <div class="order-footer">
+                Developed by 
+                &nbsp  
+                <a href="https://github.com/Hariish-A" target="_blank">
+                    
+                    Hariish A 
+                  
+                </a>
+                &nbsp;
+                and
+                &nbsp;
+                <a href="https://github.com/hajay180505" target="_blank">
+                
+                        Ajay H
+                    
+                </a>
+                &nbsp;
+            </div>
+            
+        </div>
         
-            Hariish A
-      
-    </a>
-    and
-    <a href="https://github.com/hajay180505">
+    </div>
     
-            Ajay H
-        
-    </a>
+
 </body>
 
 

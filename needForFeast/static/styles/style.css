@@ -72,6 +72,19 @@ body{
     cursor:pointer;
   }
 
-  .a5{
+  .order-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     
+  } 
+  .table-container{
+    display:flex;
+    justify-content: center;
+
+  }
+  .order-footer{
+    display:flex;
+    justify-content: center;
   }

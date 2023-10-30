@@ -39,9 +39,9 @@ def registerUser(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.role = 'CUSTOMER'
             user.name = user.name.lower()
             user.save()
+            print(user.role)
             login(request,user)
             return redirect('home')
         else:

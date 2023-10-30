@@ -1,39 +1,72 @@
-{% extends 'main.html' %}
 
-{%block content%}
-{%if page == 'login'%}
-<div>   
-    <a5>
-        <form method="POST" action="">
-            {% csrf_token %}
-            <label>Email :</label>
-            <input type="email" name = 'email' placeholder="Enter your mail id" />
 
-            <label>Password :</label>
-            <input type="password" name = 'password' placeholder="Password" />
+{%load static%}
 
-            <input type="submit" value="Login" />
-        </form>
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+</head>
+<title>Need for feast</title>
+<body  class = 'make-login' >
+    
+    <div class="login-container">
+        
+        <a href = '/'>
+            <img src = " {%static 'images/transparent_black.png'%}" class = 'logo'>
+        </a>
+
+        <span class="header">
+            NEED FOR FEAST
+        </span>
+        
+        {%if messages%}
+        <ul>
+            {% for message in messages %}
+                <li>{{message}}</li>
+            {%endfor%}  
+        </ul>
+        {% endif %}
+
+        {%if page == 'login'%}
+        <div class = "login-content">   
+            <form method="POST" action="">
+                {% csrf_token %}
+                <label>Email :</label>
+                <input type="email" name = 'email' placeholder="Enter your mail id" />
+
+                <label>Password :</label>
+                <input type="password" name = 'password' placeholder="Password" />
+
+                <input type="submit" value="Login" />
+            </form>
         <p>
             Haven't signed up ? 
         </p>
         <a href = "{% url 'register'%}">Sign up</a>
-    </a5>
-</div>
-{%else%}
-<div>
-    <form method="POST" action="">
-        {% csrf_token %}
-        
+        </div>
+        {%else%}
+        <div class = "login-content">
+            <form method="POST" action="">
+                {% csrf_token %}
+                {%for field in form%}
+                    <div>
+                        <label class="l"    >{{field.label}} </label>
+                        {{field.errors}}
+                        {{field}}
+                    </div>
 
-        
-        {{form.as_p}}
-        <input type="submit" value="Register" />
-        <p>
-            Already signed up ? 
-        </p>
-        <a href = "{% url 'login'%}"> Log in</a>
-    </form>
-</div>
-{%endif%}
-{%endblock content%}
+                {% endfor %}
+                <input type="submit" value="Register" />
+                <p>
+                    Already signed up ? 
+                </p>
+                <a href = "{% url 'login'%}"> Log in</a>
+            </form>
+        </div>
+        {%endif%}
+
+    </div>   
+    
+ 
+
+</body>

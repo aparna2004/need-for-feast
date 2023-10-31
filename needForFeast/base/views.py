@@ -83,8 +83,8 @@ def order(request):
             bill_item["qty"] = qty_list[loop]
             bill.append(bill_item)
             print(bill_item)
+            amt += ( record.price * int(qty_list[loop]) )
             loop += 1
-            amt += record.price
 
         if amt == 0:
             messages.error(request, "No items have been chosen. Try again!")

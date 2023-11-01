@@ -113,4 +113,21 @@ body{
     line-height: 50px;
   }
 
-  
+  .order-confirm-body{
+    background-color: #553c9a;
+  }
+
+  input:not([type="submit"],[type="number"])  {
+    width: 300px;
+    font-size: 20px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 3px dotted black;
+  }
+  label {
+    display: inline-block;
+    width: 300px;
+    text-align: left;
+  }
+

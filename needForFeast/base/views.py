@@ -4,7 +4,7 @@ from .models import Items, Order,User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from .forms import SignupForm
+from .forms import CustomerSignupForm,OwnerSignupForm, DelivererSignupForm
 
 def loginPage(request):
     page = 'login'
@@ -33,10 +33,11 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 
-def registerUser(request):
-    form = SignupForm()
+
+def registerCustomer(request):
+    form = CustomerSignupForm()
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = CustomerSignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.name = user.name.lower()
@@ -46,12 +47,43 @@ def registerUser(request):
             return redirect('home')
         else:
             messages.error(request,"An error occured!")
-    return render(request,'base/login_register.html',{'form':form})
+    return render(request,'base/register_customer.html',{'form':form})
 
+def registerOwner(request):
+    form = OwnerSignupForm()
+    if request.method == 'POST':
+        form = OwnerSignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.name = user.name.lower()
+            user.save()
+            print(user.role)
+            login(request,user)
+            return redirect('home')
+        else:
+            messages.error(request,"An error occured!")
+    return render(request,'base/register_owner.html',{'form':form})
+
+
+def registerDeliverer(request):
+    form = DelivererSignupForm()
+    if request.method == 'POST':
+        form = DelivererSignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.name = user.name.lower()
+            user.save()
+            print(user.role)
+            login(request,user)
+            return redirect('home')
+        else:
+            messages.error(request,"An error occured!")
+    return render(request,'base/register_deliverer.html',{'form':form})
 
 
 def home(request):
     return render(request, "base/home.html")
+
 
 @login_required(login_url='login')
 def order(request):
@@ -75,6 +107,9 @@ def order(request):
         bill = []
         loop = 0
         for key in item_list:
+            if int(qty_list[loop])<0:
+                messages.error(request,"Negative values not permitted")
+                return render(request,"base/order.html",context)
             record = Items.objects.get(id=key)
             bill_item = dict()
             print(record.name, record.price, qty_list[loop])
@@ -98,3 +133,22 @@ def order(request):
 
         return HttpResponse("Thank you for ordering")
     return render(request, "base/order.html", context=context)
+
+
+def selectRole(request):
+    if request.method == 'POST':
+        selected_role = request.POST.get('selected_role')
+        print(selected_role)
+        if selected_role=='customer':
+            return redirect('register_customer')
+            #return registerCustomer(request)
+        elif selected_role == 'owner':
+            return redirect('register_owner')
+            #return registerOwner(request)
+        elif selected_role == 'deliverer':
+            return redirect('register_deliverer')
+            #return registerCustomer(request)
+        else:
+            messages.error(request, "Please select a role")
+            return render(request, 'base/role_selection.html')
+    return render(request,"base/role_selection.html")

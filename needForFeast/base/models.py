@@ -1,7 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext as _
 from django.core.validators import MinValueValidator,MaxValueValidator
+from django.db.models.signals import post_save,post_delete
+from django.dispatch import receiver
 
 
 # # Create your models here.
@@ -9,10 +11,6 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 #     pass
 
 
-from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db.models.signals import post_save,post_delete
-from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -113,46 +111,69 @@ class DelivererProfile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created and instance.role == "DELIVERER":
         DelivererProfile.objects.create(user=instance)
-                                      
+
+
+
 class Restaurant(models.Model):
     name = models.CharField(max_length=30)
     owner = models.ForeignKey(Owner,on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="images/restaurant",null=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
+
+    def __str__(self):
+        return f"{self.name} by {self.owner}"
+
+
+
 
 class Items(models.Model):
+
+    class Cusine(models.TextChoices):
+        NORTH_INDIAN = 'NORTH INDIAN', 'north indian'
+        CHINESE = 'CHINESE', 'chinese'
+        SOUTH_INDIAN = 'SOUTH INDIAN', 'south indian'
+        WESTERN = 'WESTERN', 'western'
     name = models.CharField(max_length=40)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField(max_length=200, null=True)
-    veg = models.CharField(max_length=7, default="Veg")
+    category = models.CharField(max_length=8, choices=CustomerProfile.Preferences.choices ,default=CustomerProfile.Preferences.VEG)
     image = models.ImageField(upload_to="images/")
-    quantity = models.PositiveIntegerField(null=True)
-
+    quantity = models.PositiveIntegerField(null=True, validators=[MinValueValidator(0),])
+    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
+    restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE)
+    offer = models.IntegerField(validators=[MaxValueValidator(100),MinValueValidator(0)],default=0)
+    cusine = models.CharField(max_length=20, choices= Cusine.choices, default= Cusine.SOUTH_INDIAN)
+    
     def __str__(self) -> str:
         return self.name
+
+
 
 
 class Order(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     items = models.ManyToManyField(Items, related_name="placed", blank=True)
     amount = models.DecimalField(max_digits=5, decimal_places=2)
-
+    deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name='foodorder')
     def __str__(self) -> str:
-        return f"{self.created_on}+ {self.price}"
+        return f"@ {self.created_on} ${self.amount}"
     
-class CustomerDelivererRelationship(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='deliverer')
-    deliverer = models.ForeignKey(Deliverer, on_delete=models.CASCADE, related_name='customer')
-    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+# class CustomerDelivererRelationship(models.Model):
+#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='deliverer')
+#     deliverer = models.ForeignKey(Deliverer, on_delete=models.CASCADE, related_name='customer')
+#     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
 
 
-@receiver(post_save, sender=CustomerDelivererRelationship)
-@receiver(post_delete, sender=CustomerDelivererRelationship)
-def update_deliverer_rating(sender, instance, **kwargs):
-    deliverer = instance.deliverer
-    deliverer_ratings = CustomerDelivererRelationship.objects.filter(deliverer=deliverer)
-    total_ratings = deliverer_ratings.count()
-    if total_ratings > 0:
-        total_rating = sum(rating.rating for rating in deliverer_ratings)
-        deliverer.rating = total_rating / total_ratings
-    else:
-        deliverer.rating = 0.0
-    deliverer.save()
+# @receiver(post_save, sender=CustomerDelivererRelationship)
+# @receiver(post_delete, sender=CustomerDelivererRelationship)
+# def update_deliverer_rating(sender, instance, **kwargs):
+#     deliverer = instance.deliverer
+#     deliverer_ratings = CustomerDelivererRelationship.objects.filter(deliverer=deliverer)
+#     total_ratings = deliverer_ratings.count()
+#     if total_ratings > 0:
+#         total_rating = sum(rating.rating for rating in deliverer_ratings)
+#         deliverer.rating = total_rating / total_ratings
+#     else:
+#         deliverer.rating = 0.0
+#     deliverer.save()

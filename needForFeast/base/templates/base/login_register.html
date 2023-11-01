@@ -29,43 +29,22 @@
 
         {%if page == 'login'%}
         <div class = "login-content">   
-            <form method="POST" action="">
+            <form method="POST" action="" class="form-box">
                 {% csrf_token %}
                 <label>Email :</label>
                 <input type="email" name = 'email' placeholder="Enter your mail id" />
-
+                <br>    
                 <label>Password :</label>
                 <input type="password" name = 'password' placeholder="Password" />
-
+                <br>
                 <input type="submit" value="Login" />
             </form>
         <p>
             Haven't signed up ? 
         </p>
-        <a href = "{% url 'register'%}">Sign up</a>
+        <a href = "{% url 'role'%}">Sign up</a>
         </div>
-        {%else%}
-        <div class = "login-content">
-            <form method="POST" action="">
-                {% csrf_token %}
-                {%for field in form%}
-                    <br>
-                    <div>
-                        <label class="l">{{field.label}} </label>
-                        {{field.errors}}
-                        {{field}}
-                        
-                    </div>
-
-                {% endfor %}
-                <br>
-                <input type="submit" value = "Register" />
-                <p>
-                    Already signed up ? 
-                </p>
-                <a href = "{% url 'login'%}"> Log in</a>
-            </form>
-        </div>
+        
         {%endif%}
 
     </div>   

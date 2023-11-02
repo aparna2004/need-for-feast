@@ -31,7 +31,7 @@
             </tr>
     </table>
     
-    <a href="{{request.META.HTTP_REFERER}}"> Change order</a>
+    <a href="{%url 'delete-order' order.pk%}"> Change order</a>
     <br>
     <a href="{%url 'order'%}"> Place another order</a>
     <br>

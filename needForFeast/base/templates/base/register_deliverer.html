@@ -6,7 +6,7 @@
         <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
     </head>
     <title>Need for feast</title>
-    <body>
+    <body class = "deliverer-content">
         <div class="login-content">
             <form action="" method="POST">
                 {%csrf_token%}
@@ -20,6 +20,9 @@
                     </div>
                     
                 {%endfor%}
+                <label for="area-input">Area </label>
+                <input type="text" id="area-input" name="area"/>
+                <br>
                 <input type="submit" value="Register"/>
             </form>
         </div>

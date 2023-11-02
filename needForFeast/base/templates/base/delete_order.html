@@ -1,0 +1,28 @@
+<form action="" method="POST">
+    {%csrf_token%}
+    Are you sure you want to delete this order?
+    <table>
+        <tr>
+            <th> Item Name </th>
+            <th> Price </th> 
+            <th> Quantity </th>
+        </tr>
+    
+        {% for item in rel %}
+            <tr>
+                <td> {{item.items.name}} </td>
+                <td> {{item.items.price}} </td>
+                <td > {{item.quantity}} </td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td>Amount:</td>
+                <td> </td>
+                <td>{{obj.amount}}</td>
+            </tr>
+    </table>
+    <a href='{{request.META.HTTP_REFERER}}' >
+        No
+    </a>
+    <input type='submit' value='Delete'/>
+</form>

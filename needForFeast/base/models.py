@@ -63,11 +63,11 @@ class Customer(User):
 
 
 class PhoneNumbers(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING)
+    user = models.ForeignKey(User, models.CASCADE)
     phone_number = models.CharField(max_length=10)
 
 class Addresses(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     area = models.CharField(max_length=20)
 
@@ -105,7 +105,7 @@ class Deliverer(User):
 
 class DelivererProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    area = models.CharField(max_length=20)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
 
 @receiver(post_save, sender=Deliverer)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -115,13 +115,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 class Restaurant(models.Model):
-    name = models.CharField(max_length=30)
-    owner = models.ForeignKey(Owner,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="images/restaurant",null=True)
+    name1 = models.CharField(max_length=30,verbose_name="Restaurant Name",default="")
+    owner = models.OneToOneField(Owner,on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="restaurant/",null=True)
+    description = models.CharField(max_length=200, null=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
-
     def __str__(self):
-        return f"{self.name} by {self.owner}"
+        return f"{self.name}"
 
 
 
@@ -137,7 +137,7 @@ class Items(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
     description = models.TextField(max_length=200, null=True)
     category = models.CharField(max_length=8, choices=CustomerProfile.Preferences.choices ,default=CustomerProfile.Preferences.VEG)
-    image = models.ImageField(upload_to="images/")
+    image = models.ImageField(upload_to="items/")
     quantity = models.PositiveIntegerField(null=True, validators=[MinValueValidator(0),])
     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
     restaurant = models.ForeignKey(Restaurant,on_delete=models.CASCADE)
@@ -152,12 +152,22 @@ class Items(models.Model):
 
 class Order(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
-    items = models.ManyToManyField(Items, related_name="placed", blank=True)
+    items = models.ManyToManyField(Items, related_name="placed", through='OrderItem')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
-    deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING)
+    deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name='foodorder')
+    delivered = models.BooleanField(default=False)
     def __str__(self) -> str:
         return f"@ {self.created_on} ${self.amount}"
+    
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    items = models.ForeignKey(Items, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+
+
+
     
 # class CustomerDelivererRelationship(models.Model):
 #     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='deliverer')

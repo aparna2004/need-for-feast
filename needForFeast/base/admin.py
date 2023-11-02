@@ -5,3 +5,4 @@ from .models import Items, Order, User
 admin.site.register(Items)
 admin.site.register(Order)
 admin.site.register(User)
+

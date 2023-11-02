@@ -1,0 +1,23 @@
+
+<table>
+    <tr>
+        <th> Name </th>
+        <th> Description </th>
+        <th> Rating </th>
+        <th> Area</th>
+
+    </tr>
+
+    {% for item in restaurant %}
+        <tr>
+            <td>
+                <a href="{% url 'order' item.pk %}">{{item.name1}}</a>
+            </td>
+            <td>{{item.description}}</td>
+            <td>{{item.rating}} </td>
+            <td>{{item.owner.addresses.area}}</td>
+
+        </tr>
+    {% endfor %}
+</table>
+

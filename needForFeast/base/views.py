@@ -4,10 +4,11 @@ from .models import Items, Order,User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from .forms import CustomerSignupForm,OwnerSignupForm, DelivererSignupForm
+from .forms import *
+from .models import CustomerProfile,PhoneNumbers,Addresses
+
 
 def loginPage(request):
-    page = 'login'
     if request.user.is_authenticated:
         return redirect('home')
     if request.method == 'POST':
@@ -26,8 +27,8 @@ def loginPage(request):
         else:
             messages.error(request, "Incorrect username or password")
 
-    context = {'page' : page}
-    return render(request, "base/login_register.html",context=context)
+
+    return render(request, "base/login_register.html")
 
 def logoutUser(request):
     logout(request)
@@ -38,11 +39,22 @@ def registerCustomer(request):
     form = CustomerSignupForm()
     if request.method == 'POST':
         form = CustomerSignupForm(request.POST)
+        pref = request.POST.get("selected_pref")
+        num = request.POST.get("phonenumber")
+        address = request.POST.get("address")
+        area = request.POST.get("area")
         if form.is_valid():
             user = form.save(commit=False)
             user.name = user.name.lower()
             user.save()
+            c = CustomerProfile.objects.get(user = user)
+            c.preference = CustomerProfile.Preferences.VEG if pref=='veg' else CustomerProfile.Preferences.NONVEG
+            c.save()
+            Addresses.objects.create(user = user,address = address, area = area)
+            PhoneNumbers.objects.create(user = user, phone_number = num)
             print(user.role)
+            print(user.phonenumbers_set)
+            print(user.addresses_set)
             login(request,user)
             return redirect('home')
         else:
@@ -51,28 +63,44 @@ def registerCustomer(request):
 
 def registerOwner(request):
     form = OwnerSignupForm()
+    res_form = RestaurantCreationForm()
     if request.method == 'POST':
+        num = request.POST.get("phonenumber")
+        address = request.POST.get("address")
+        area = request.POST.get("area")
         form = OwnerSignupForm(request.POST)
-        if form.is_valid():
+        res_form = RestaurantCreationForm(request.POST,request.FILES)
+        if form.is_valid() and res_form.is_valid():
             user = form.save(commit=False)
             user.name = user.name.lower()
             user.save()
+            res = res_form.save(commit=False)
+            res.owner = user
+            res.save()
+            Addresses.objects.create(user = user,address = address, area = area)
+            PhoneNumbers.objects.create(user = user, phone_number = num)
             print(user.role)
+            print(user.phonenumbers_set)
+            print(user.addresses_set)
+            print(user.role)
+            print(res.name1)
             login(request,user)
             return redirect('home')
         else:
             messages.error(request,"An error occured!")
-    return render(request,'base/register_owner.html',{'form':form})
+    return render(request,'base/register_owner.html',{'form':form, 'res' : res_form})
 
 
 def registerDeliverer(request):
     form = DelivererSignupForm()
     if request.method == 'POST':
         form = DelivererSignupForm(request.POST)
+        area = request.POST.get("area")
         if form.is_valid():
             user = form.save(commit=False)
             user.name = user.name.lower()
             user.save()
+            Addresses.objects.create(user = user,address = "", area = area)
             print(user.role)
             login(request,user)
             return redirect('home')
@@ -86,8 +114,8 @@ def home(request):
 
 
 @login_required(login_url='login')
-def order(request):
-    items = Items.objects.all()
+def order(request,pk):
+    items = Items.objects.all().filter(restaurant_id = pk, quantity__gt = 0)
     context = {"items": items}
 
     if request.method == "POST":
@@ -113,9 +141,11 @@ def order(request):
             record = Items.objects.get(id=key)
             bill_item = dict()
             print(record.name, record.price, qty_list[loop])
+            bill_item['id'] = key
             bill_item["name"] = record.name
             bill_item["price"] = int(record.price)
-            bill_item["qty"] = qty_list[loop]
+            bill_item["qty"] = int(qty_list[loop])
+            bill_item['rec'] = record
             bill.append(bill_item)
             print(bill_item)
             amt += ( record.price * int(qty_list[loop]) )
@@ -125,13 +155,23 @@ def order(request):
             messages.error(request, "No items have been chosen. Try again!")
             return render(request, "base/order.html", context=context)
 
-        order = Order.objects.create(amount=amt)
-        order.items.add(*item_list)
-        order.save()
-        print(bill)
-        return render(request, "base/order_confirm.html", {"bill": bill, "amount": amt})
+        for entity in bill:
+            # i = Items.objects.get(id  = entity['id'])
+            if entity['rec'].quantity < entity['qty']:
+                messages.error(request, "Choose "+ str( - entity['rec'].quantity + entity['qty']) + " less of " + entity['name'] +" and try again!")
+                return render(request, "base/order.html", context=context)
+            else:
+                entity['rec'].quantity -= entity['qty']
+                entity['rec'].save()
 
-        return HttpResponse("Thank you for ordering")
+
+        order = Order.objects.create( customer = request.user,amount=amt)
+        for i in bill:
+                OrderItem.objects.create(order = order, items = i['rec'], quantity =i['qty'] )
+
+        print(bill)
+        return render(request, "base/order_confirm.html", {"bill": bill, "amount": amt, 'order' : order})
+
     return render(request, "base/order.html", context=context)
 
 
@@ -152,3 +192,55 @@ def selectRole(request):
             messages.error(request, "Please select a role")
             return render(request, 'base/role_selection.html')
     return render(request,"base/role_selection.html")
+
+
+def displayRestaurants(request):
+    print(request.user.__dir__())
+    r = Restaurant.objects.all().filter(owner__addresses__area= request.user.addresses.area)
+
+    return render(request, 'base/restaurants.html', {'restaurant' : r})
+
+
+# def customerHome(request):
+#     context = {}
+#     return render(request, "base/customer_home.html", context=context)
+
+# def ownerHome(request):
+#     context = {}
+#     return render(request, "base/owner_home.html", context=context)
+
+# def delivererHome(request):
+#     context = {}
+#     return render(request, "base/deliverer_home.html", context=context)
+
+def stats(request):
+    return HttpResponse("STATISTICS for " + request.user.name)
+
+def createItem(request):
+    form = ItemForm()
+
+    if request.method == 'POST':
+        form = ItemForm(request.POST,request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            print(request.__dir__())
+            item.restaurant = request.user.restaurant
+            item.save()
+            return redirect('home')
+    return render(request, "base/item_create.html",{'form': form})
+
+def deleteOrder(request,pk):
+
+    orderitem = OrderItem.objects.all().filter(order_id = pk).select_related('items')
+    order = Order.objects.get(id=pk)
+    if request.method == 'POST':
+        for x in orderitem:
+            i = Items.objects.get(id = x.items_id)
+            i.quantity += x.quantity
+            print(x.quantity)
+            print(i, i.quantity)
+            i.save()
+        order.delete()
+
+        return redirect('order')
+    return render(request,'base/delete_order.html',{"obj" : order,"rel" : orderitem})

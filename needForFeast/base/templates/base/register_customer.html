@@ -6,7 +6,7 @@
         <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
     </head>
     <title>Need for feast</title>
-    <body>
+    <body class="customer-content">
         <div class="login-content">
             <form action="" method="POST">
                 {%csrf_token%}
@@ -16,10 +16,25 @@
                             {{field.label}}
                         </label>
                         {{field.errors}}
-                        {{field}}
+                        {{field}}    
                     </div>
                     
                 {%endfor%}
+                <label for="address-input">Address </label>
+                <input type="text" id="address-input" name="address"/>
+                <br>
+                <label for="area-input">Area </label>
+                <input type="text" id="area-input" name="area"/>
+                <br>
+                <label for="phonenum-input">Phone Number</label>
+                <input type="tel" name="phonenumber" id="phonenum-input" pattern="[0-9]{10}"/>
+                <br>
+                <label for="pref-input"> Preference</label>
+                <select name="selected_pref" id="pref-input">
+                    <option value="veg"> Vegetarian </option>
+                    <option value="nonveg"> Non Vegetarian</option>
+                </select>
+                <br>
                 <input type="submit" value="Register"/>
             </form>
         </div>

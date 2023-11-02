@@ -6,9 +6,9 @@
         <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
     </head>
     <title>Need for feast</title>
-    <body>
+    <body class = "owner-content">
         <div class="login-content">
-            <form action="" method="POST">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {%csrf_token%}
                 {%for field in form %}
                     <div>
@@ -18,8 +18,31 @@
                         {{field.errors}}
                         {{field}}
                     </div>
-                    
                 {%endfor%}
+                <p>
+                   <strong> Restaurant details: </strong>     
+                </p>
+                {%for f in res %}
+                    <div>
+                        <label class="">
+                            {{f.label}}
+                        </label>
+                        {{f.errors}}
+                        {{f}}
+                    </div>
+                {%endfor%}
+
+                <label for="address-input">Address </label>
+                <input type="text" id="address-input" name="address"/>
+                <br>
+                <label for="area-input">Area </label>
+                <input type="text" id="area-input" name="area"/>
+                <br>
+                <label for="phonenum-input">Phone Number</label>
+                <input type="tel" name="phonenumber" id="phonenum-input" pattern="[0-9]{10}"/>
+                <br>
+
+
                 <input type="submit" value="Register"/>
             </form>
         </div>

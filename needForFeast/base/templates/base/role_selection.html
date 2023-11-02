@@ -6,7 +6,8 @@
     <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
 </head>
 <title>Need for feast</title>
-<body>
+<body class = "role-content">
+
     {%if messages%}
         <ul>
             {% for message in messages %}
@@ -17,13 +18,16 @@
     <label for="role-select">Choose a role:</label>
     <form method="POST" action="">
         {% csrf_token %}
-        <select name="selected_role" id="role-select">
-            <option value="">--Please choose an option--</option>
-            <option value="customer">Customer</option>
-            <option value="owner">Owner</option>
-            <option value="deliverer">Deliverer</option>
-        </select>
-        <input type="submit" value="submit" />
+        <!-- <div class = "select-content"> -->
+            <select name="selected_role" id="role-select" class = "select-content">
+                <option value=""></option>
+                <option value="customer">Customer</option>
+                <option value="owner">Owner</option>
+                <option value="deliverer">Deliverer</option>
+            </select>
+        
+        <input class = "sub-button" type="submit" value="Next" />
+        <!-- </div>   -->
     </form>
     
 

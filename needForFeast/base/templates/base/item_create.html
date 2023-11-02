@@ -1,0 +1,27 @@
+{%load static%}
+<html>
+
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+</head>
+<title>Need for feast</title>
+<body>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {%csrf_token%}
+        {%for field in form%}
+        <div>
+            <label class="">
+                {{field.label}}
+            </label>
+            {{field.errors}}
+            {{field}}    
+        </div>
+        {%endfor%}
+        <input type="submit" value="Create"/>
+
+    </form>
+</body>
+
+
+</html>

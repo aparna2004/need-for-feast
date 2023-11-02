@@ -1,5 +1,3 @@
-
-
 {%load static%}
 
 <head>
@@ -27,7 +25,6 @@
         </ul>
         {% endif %}
 
-        {%if page == 'login'%}
         <div class = "login-content">   
             <form method="POST" action="" class="form-box">
                 {% csrf_token %}
@@ -37,15 +34,18 @@
                 <label>Password :</label>
                 <input type="password" name = 'password' placeholder="Password" />
                 <br>
-                <input type="submit" value="Login" />
+                <input type="submit" value="Login" class = "login-button"/>
             </form>
         <p>
             Haven't signed up ? 
         </p>
-        <a href = "{% url 'role'%}">Sign up</a>
+        <a href = "{% url 'role'%}" class = "signup-content">
+            <button class = 'login-button'>
+                Sign up
+            </button>
+        </a>
         </div>
         
-        {%endif%}
 
     </div>   
     

@@ -1,6 +1,10 @@
 /* * {
     background-color: red;
 } */
+
+*{
+  font-family: Arial, Helvetica, sans-serif;
+}
 body{
     margin:0px;    
 }
@@ -27,7 +31,7 @@ body{
 .home-content-wrapper{
     
     margin-left: 15px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     float: right;
     
 } 
@@ -131,3 +135,65 @@ body{
     text-align: left;
   }
 
+  .role-content{
+    background-image: url("../images/orange_with_circles.jpeg");
+    background-size: 100% 100%;
+    margin-top: 260;
+    margin-left: 600;
+    font-size:x-large;
+    line-height: 50px;
+  }
+
+  .sub-button{
+    background-color: rgb(58, 1, 163);
+    color: white;
+    /* border: none; */
+    height: 36px;
+    width: 74px;
+    /* border-radius: 8px;
+    border-radius: 18px; */
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 18px;
+  }
+
+  .select-content{
+    width: 210px;
+    height:36px;
+  }
+
+  .login-button{
+    background-color: rgb(182, 0, 0);
+    color: white;
+    /* border: none; */
+    height: 36px;
+    width: 74px;
+    /* border-radius: 8px;
+    border-radius: 18px; */
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 2.7px;
+    margin-top: 20;
+
+  }
+
+  .signup-content{
+    color: rgb(0, 174, 255);
+  }
+
+  .customer-content{
+    background-image: url("../images/salad.jpeg");
+    background-size: 100% 100%;
+  }
+
+  .deliverer-content{
+    background-image: url("../images/omlette.jpeg");
+    background-size: 100% 100%;
+  }
+
+  .owner-content{
+    background-image: url("../images/donut.jpeg");
+    background-size: 100% 100%;
+  }

@@ -6,11 +6,11 @@
     <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
 </head>
 <title>Need for feast</title>
-<body>
+<body class = "item-create">
     <form action="" method="POST" enctype="multipart/form-data">
         {%csrf_token%}
         {%for field in form%}
-        <div>
+        <div class = "table-addon">
             <label class="">
                 {{field.label}}
             </label>
@@ -18,9 +18,14 @@
             {{field}}    
         </div>
         {%endfor%}
-        <input type="submit" value="Create"/>
+            <input type="submit" value="Finish" style="margin-bottom: 20;"/>
+        
+       
 
     </form>
+    <a href = "/" style="margin-bottom: 20;">
+        <button class = "sub-button" style="background-color: blue;margin-left: auto;"> Back </button>
+    </a>
 </body>
 
 

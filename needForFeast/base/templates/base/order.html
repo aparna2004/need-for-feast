@@ -8,6 +8,7 @@
 <head>
     <link rel='stylesheet' href="{%static 'styles/style.css'%}" />
     <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 <body style='background-image: url("../images/order.jpg"); background-size: 100% 100%;
@@ -40,6 +41,7 @@ height:100vh;'>
                         <th> Category</th>
                         <th> Price </th> 
                         <th> Discount Price </th>
+                        <th> Rating </th>
                         <th> Quantity </th>
                     </tr>
                 
@@ -62,12 +64,25 @@ height:100vh;'>
                                     {{item.price|sub:off|floatformat:"0"}}
                                 {% endwith %} 
                             </td>
+                            <td>
+                                <span>
+                                <i class="fa fa-star{% if item.rating == 0.5 %}-half-o{% elif item.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                            
+                                <i class="fa fa-star{% if item.rating == 1.5 %}-half-o{% elif item.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                            
+                                <i class="fa fa-star{% if item.rating == 2.5 %}-half-o{% elif item.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                            
+                                <i class="fa fa-star{% if item.rating == 3.5 %}-half-o{% elif item.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                            
+                                <i class="fa fa-star{% if item.rating == 4.5 %}-half-o{% elif item.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                </span>
+                            </td>
                             <td > <input type="number" name="quantity_list"   /> </td>
                         
                         </tr>
                     {% endfor %}
                 </table>
-                <button> Submit </button>
+                <button class = "sub-button" style="margin-left: 128;margin-top: 20;"> Submit </button>
             </form>
             <br>
             </div>

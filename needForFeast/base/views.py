@@ -72,7 +72,7 @@ def registerOwner(request):
         res_form = RestaurantCreationForm(request.POST,request.FILES)
         if form.is_valid() and res_form.is_valid():
             user = form.save(commit=False)
-            user.name = user.name.lower()
+            # user.name = user.name.lower()
             user.save()
             res = res_form.save(commit=False)
             res.owner = user
@@ -98,7 +98,7 @@ def registerDeliverer(request):
         area = request.POST.get("area")
         if form.is_valid():
             user = form.save(commit=False)
-            user.name = user.name.lower()
+            # user.name = user.name.lower()
             user.save()
             Addresses.objects.create(user = user,address = "", area = area)
             print(user.role)

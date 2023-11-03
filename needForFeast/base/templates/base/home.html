@@ -7,6 +7,7 @@
 <head>
     <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
     <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <title>Need for feast</title>
 <body class = 'main-body' >
@@ -32,7 +33,7 @@
         
 
         
-            {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated %}  
             <div class="home-content-wrapper">
                 <span>
                     {%if request.user.role == 'OWNER' %}
@@ -68,7 +69,9 @@
                 </a>
             </div>
 
-
+            <p>
+                Hello, {{request.user.name}}
+            </p> 
             <div class="home-details">
                 {%if request.user.role == 'OWNER' %}
                     <a href = "{% url 'create_item' %}">
@@ -77,7 +80,7 @@
                         </button>
                     </a>
 
-                    <table>
+                    <table class = "pending-table">
                         <tr>
 
                             <th> Image </th>
@@ -106,16 +109,18 @@
                                 <td > {{item.quantity}}</td>
                                 <td> 
                                     <a href = "{% url 'update-item' item.id %}">
-                                        <button class = 'create-button'>
+                                        <!-- <button class = 'create-button'>
                                             Edit
-                                        </button>
+                                        </button> -->
+                                        <i class="far fa-edit"></i>
                                     </a> 
                                 </td>
                                 <td> 
                                     <a href = "{% url 'delete-item' item.id %}">
-                                        <button class = 'login-button' style='margin-top :0;'>
+                                        <!-- <button class = 'login-button' style='margin-top :0;'>
                                             Delete
-                                        </button>
+                                        </button> -->
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
                                     </a> 
 
                                 </td>

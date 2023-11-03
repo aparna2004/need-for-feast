@@ -170,7 +170,7 @@ def order(request,pk):
                 OrderItem.objects.create(order = order, items = i['rec'], quantity =i['qty'] )
 
         print(bill)
-        return render(request, "base/order_confirm.html", {"bill": bill, "amount": amt, 'order' : order})
+        return render(request, "base/order_confirm.html", {"bill": bill, "amount": amt, 'order' : order,'temp': bill[0]['rec'].restaurant_id})
 
     return render(request, "base/order.html", context=context)
 
@@ -242,5 +242,5 @@ def deleteOrder(request,pk):
             i.save()
         order.delete()
 
-        return redirect('order')
+        return redirect('restaurant-list')
     return render(request,'base/delete_order.html',{"obj" : order,"rel" : orderitem})

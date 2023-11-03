@@ -115,6 +115,8 @@ body{
     margin-left: 400;
     font-size:x-large;
     line-height: 50px;
+    text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+    color:white
   }
 
   .order-confirm-body{

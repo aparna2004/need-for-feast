@@ -52,9 +52,9 @@ def registerCustomer(request):
             c.save()
             Addresses.objects.create(user = user,address = address, area = area)
             PhoneNumbers.objects.create(user = user, phone_number = num)
-            print(user.role)
-            print(user.phonenumbers_set)
-            print(user.addresses_set)
+            # print(user.role)
+            # print(user.phonenumbers_set)
+            # print(user.addresses_set)
             login(request,user)
             return redirect('home')
         else:
@@ -79,11 +79,11 @@ def registerOwner(request):
             res.save()
             Addresses.objects.create(user = user,address = address, area = area)
             PhoneNumbers.objects.create(user = user, phone_number = num)
-            print(user.role)
-            print(user.phonenumbers_set)
-            print(user.addresses_set)
-            print(user.role)
-            print(res.name1)
+            # print(user.role)
+            # print(user.phonenumbers_set)
+            # print(user.addresses_set)
+            # print(user.role)
+            # print(res.name1)
             login(request,user)
             return redirect('home')
         else:
@@ -115,8 +115,14 @@ def home(request):
 
 @login_required(login_url='login')
 def order(request,pk):
-    items = Items.objects.all().filter(restaurant_id = pk, quantity__gt = 0)
+    temp = CustomerProfile.objects.get(user_id = request.user.id)
+    if temp.preference == "VEG":
+        items = Items.objects.all().filter(restaurant_id = pk,category = temp.preference ,quantity__gt = 0)
+    else:
+        items = Items.objects.all().filter(restaurant_id = pk,quantity__gt = 0)
     context = {"items": items}
+    print("r = ",temp.preference)
+    
 
     if request.method == "POST":
         item_list = request.POST.getlist("item_list")

@@ -121,7 +121,7 @@ class Restaurant(models.Model):
     description = models.CharField(max_length=200, null=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name1}"
 
 
 
@@ -155,7 +155,7 @@ class Order(models.Model):
     items = models.ManyToManyField(Items, related_name="placed", through='OrderItem')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
-    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name='foodorder')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='foodorder')
     delivered = models.BooleanField(default=False)
     def __str__(self) -> str:
         return f"@ {self.created_on} ${self.amount}"

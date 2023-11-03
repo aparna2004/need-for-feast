@@ -71,15 +71,85 @@
 
             <div class="home-details">
                 {%if request.user.role == 'OWNER' %}
-                    Owner ooda item list
                     <a href = "{% url 'create_item' %}">
-                        <button class = 'login-button'>
+                        <button class = 'login-button' style='width : 100px ;'>
                             Add item
                         </button>
                     </a>
+
+                    <table>
+                        <tr>
+
+                            <th> Image </th>
+                            <th> Item Name </th>
+                            <th> Category</th>
+                            <th> Price </th> 
+                            <th> Offer </th>
+                            <th> Quantity </th>
+                            <th> </th>
+                            <th> </th>
+                        </tr>
+                    
+                        {% for item in item_list %}
+                            <tr>
+                                <td> <img class="menu-item-image" src="{{item.image.url }}" width="60px" height="60px"/> </td>
+                                <td> {{item.name}} </td>
+                                <td>
+                                {%if item.category == 'VEG' %}
+                                    <img src = "{%static 'images/veg.png'%}" width='40px' height='40px'/>
+                                {%else%}
+                                    <img src = "{%static 'images/nonveg.png'%}" width='40px' height='40px'/>
+                                {%endif%}
+                                </td>
+                                <td> {{item.price|floatformat:"0"}} </td>
+                                <td> {{item.offer}} </td>
+                                <td > {{item.quantity}}</td>
+                                <td> 
+                                    <a href = "{% url 'update-item' item.id %}">
+                                        <button class = 'create-button'>
+                                            Edit
+                                        </button>
+                                    </a> 
+                                </td>
+                                <td> 
+                                    <a href = "{% url 'delete-item' item.id %}">
+                                        <button class = 'login-button' style='margin-top :0;'>
+                                            Delete
+                                        </button>
+                                    </a> 
+
+                                </td>
+                            
+                            </tr>
+                        {% endfor %}
+                    </table>
+    
                 {%elif request.user.role == 'CUSTOMER' %}
-                
-                    customer ooda order status and item reccomendations
+                    <p> Pending orders</p>
+                    {%for order in order_list%}
+                        <p> Order number {{forloop.counter}} : {{order.created_on|timesince}} ago</p>
+                        <a href = "{% url 'order-view' order.id %}" >
+                            <button class = 'create-button'>
+                                Details
+                            </button>
+                        </a>
+
+                        {%if order.delivered%}
+                            Delivered
+                        {%else%}
+                            Pending delivery 
+                        {%endif%}
+                    {%endfor%}
+
+                <div>
+                    {% comment %} Recommendations
+                    {%for item_container in items%}
+                    {{r.forloop.count0}}
+
+                    {%endfor%} {% endcomment %}
+
+                </div>
+            
 
                 {%elif request.user.role == 'DELIVERER' %}
 

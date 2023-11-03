@@ -110,7 +110,31 @@ def registerDeliverer(request):
 
 
 def home(request):
-    return render(request, "base/home.html")
+    context = {}
+    if request.user.is_authenticated:
+        if request.user.role == 'CUSTOMER':
+            order = Order.objects.all().filter(customer_id = request.user.id)
+            r = Restaurant.objects.all().filter(owner__addresses__area= request.user.addresses.area)
+            items = []
+            for restaurant in r:
+                items.append(Items.objects.all().filter(restaurant = restaurant))
+            # print(order)
+            # item_list = []
+            # for o in order:
+            #     print(o.id)
+            #     item_list.append(OrderItem.objects.all().filter(order_id = o.id).select_related('items','order'))
+            # print(item_list)
+            context['items'] = items
+            context['r'] = r
+            context['order_list'] = order
+        elif request.user.role == 'DELIVERER':
+            pass
+        elif request.user.role == 'OWNER':
+            
+            item_list = Items.objects.all().filter(restaurant__owner = request.user)
+            context['item_list'] = item_list
+            pass
+    return render(request, "base/home.html",context=context)
 
 
 @login_required(login_url='login')
@@ -121,15 +145,15 @@ def order(request,pk):
     else:
         items = Items.objects.all().filter(restaurant_id = pk,quantity__gt = 0)
     context = {"items": items}
-    print("r = ",temp.preference)
+    # print("r = ",temp.preference)
     
 
     if request.method == "POST":
         item_list = request.POST.getlist("item_list")
         qty_list = request.POST.getlist("quantity_list")
-        print("Items :", item_list)
+        # print("Items :", item_list)
         qty_list = [x for x in qty_list if x != "" and x != "0"]
-        print(qty_list)
+        # print(qty_list)
         amt = 0
         # bill=[
         #     {'name': 0, 'price':0}, ...
@@ -153,8 +177,8 @@ def order(request,pk):
             bill_item["qty"] = int(qty_list[loop])
             bill_item['rec'] = record
             bill.append(bill_item)
-            print(bill_item)
-            amt += ( record.price * int(qty_list[loop]) )
+            # print(bill_item)
+            amt +=  ((record.price - (record.offer*record.price/100 )) * int(qty_list[loop]) )
             loop += 1
 
         if amt == 0:
@@ -175,7 +199,7 @@ def order(request,pk):
         for i in bill:
                 OrderItem.objects.create(order = order, items = i['rec'], quantity =i['qty'] )
 
-        print(bill)
+        # print(bill)
         return render(request, "base/order_confirm.html", {"bill": bill, "amount": amt, 'order' : order,'temp': bill[0]['rec'].restaurant_id})
 
     return render(request, "base/order.html", context=context)
@@ -201,7 +225,7 @@ def selectRole(request):
 
 
 def displayRestaurants(request):
-    print(request.user.__dir__())
+    # print(request.user.__dir__())
     r = Restaurant.objects.all().filter(owner__addresses__area= request.user.addresses.area)
 
     return render(request, 'base/restaurants.html', {'restaurant' : r})
@@ -229,7 +253,7 @@ def createItem(request):
         form = ItemForm(request.POST,request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            print(request.__dir__())
+            # print(request.__dir__())
             item.restaurant = request.user.restaurant
             item.save()
             return redirect('home')
@@ -243,10 +267,35 @@ def deleteOrder(request,pk):
         for x in orderitem:
             i = Items.objects.get(id = x.items_id)
             i.quantity += x.quantity
-            print(x.quantity)
-            print(i, i.quantity)
+            # print(x.quantity)
+            # print(i, i.quantity)
             i.save()
         order.delete()
 
         return redirect('restaurant-list')
     return render(request,'base/delete_order.html',{"obj" : order,"rel" : orderitem})
+
+def updateItem(request,pk):
+    item = Items.objects.get(id = pk)
+    form = ItemForm(instance= item)
+
+    if request.method == 'POST':
+        form = ItemForm(request.POST,request.FILES,instance = item)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.save()
+            return redirect('home')
+    return render(request, "base/item_create.html",{'form': form})
+
+def deleteItem(request,pk):
+    item = Items.objects.get(id = pk)
+    if request.method == 'POST':
+        item.delete()
+        return redirect('home')
+    return render(request,'base/delete_item.html',{"item" : item})
+
+
+def viewOrder(request,pk):
+    orderitem = OrderItem.objects.all().filter(order_id = pk).select_related('items','order')
+    order = Order.objects.get(id=pk)
+    return render(request,"base/order_view.html", {'orderitem':orderitem, 'order' : order})

@@ -13,4 +13,7 @@ urlpatterns = [
     path("stats/", views.stats , name ='stats'),
     path("create-item/",views.createItem, name = 'create_item'),
     path('restaurants/',views.displayRestaurants, name='restaurant-list'),
+    path('update_item/<str:pk>/', views.updateItem, name = 'update-item'),
+    path('delete_item/<str:pk>/', views.deleteItem, name = 'delete-item'),
+    path('order_view/<str:pk>/', views.viewOrder, name='order-view'),
 ]

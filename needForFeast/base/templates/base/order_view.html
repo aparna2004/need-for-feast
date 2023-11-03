@@ -1,0 +1,64 @@
+{%load static%}
+{%load mathfilters%}
+
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+</head>
+<title>Need for feast</title>
+<body>
+
+    <div>
+        <table>
+            <tr>
+                <th> Image </th>
+                <th> Item Name </th>
+                <th> Category</th>
+                <th> Price </th> 
+                <th> Discount Price </th>
+                <th> Quantity </th>
+            </tr>
+        
+            {% for item in orderitem %}
+                <tr>
+                    <td> <img class="menu-item-image" src="{{item.items.image.url }}" width="60px" height="60px"/> </td>
+                    <td> {{item.items.name}} </td>
+                    <td>
+                    {%if item.items.category == 'VEG' %}
+                        <img src = "{%static 'images/veg.png'%}" width='40px' height='40px'/>
+                    {%else%}
+                        <img src = "{%static 'images/nonveg.png'%}" width='40px' height='40px'/>
+                    {%endif%}
+                    </td>
+                    <td> {{item.items.price|floatformat:"0"}} </td>
+                    
+                    <td class='offer'> 
+                        {%with off=item.items.price|mul:item.items.offer|div:100%}
+                            {{item.items.price|sub:off|floatformat:"0"}}
+                        {% endwith %} 
+                    </td>
+                    <td > {{item.quantity}}</td>
+                
+                </tr>
+            {% endfor %}
+        </table>
+        <p> Amount: {{order.amount}} </p>
+        <div>
+            {%if order.delivered%}
+                Delivered
+            {%else%}
+                Pending delivery 
+            {%endif%}
+        </div>
+        <div>
+            {{order.created_on|timesince}} ago
+        </div>
+        <div>
+            <a href = "{% url 'home' %}" >
+                <button class = 'login-button'>
+                    Back
+                </button>
+            </a>
+    </div>
+</body>

@@ -157,6 +157,9 @@ class Order(models.Model):
     deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='foodorder')
     delivered = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_on',]
     def __str__(self) -> str:
         return f"@ {self.created_on} ${self.amount}"
     
@@ -164,6 +167,8 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     items = models.ForeignKey(Items, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    def __str__(self):
+        return f"{self.order} with {self.items} {self.quantity=}"
 
 
 

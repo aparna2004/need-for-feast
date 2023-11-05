@@ -1,44 +1,73 @@
+
+{%load static%}
+
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<title>Need for feast</title>
 <body class = "order-his">
-        {%for order in order_list%}
-        Order number {{order.pk}} : {{order.created_on|timesince}} ago
-        <a href = "{% url 'order-view' order.id %}" >
-            <button class = 'create-button'>
-                Details
-            </button>
-        </a>
+    <a href = '/'>
+        <img src = " {%static 'images/transparent_black.png'%}" class = 'logo'>
+    </a>
+    <table class='pending-table'>
+        <tr>
+            <th> Order ID</th>
+            <th> Time</th>
+            <th> Status</th>
+            <th> </th>
+            <th> </th>
+        </tr>
+        
+    
+    {%for order in order_list%}
+    <tr>
+        <td>
+            {{order.pk}}
+        </td>
+        <td>
+            {{order.created_on|timesince}} ago
+        </td>
+        
         {% comment %} # 0 - ordered
         # -1 - refused order
         # 1 - preparing
         # 2 - ready for pickup
         # 3 - on the way
         # 4 - delivered {% endcomment %}
-        {%if order.delivered == 4 %}
-            Delivered
-        {%elif order.delivered == 3 %}
-            On the way 
-        {%elif order.delivered == 2 %}
-            Ready for pickup
-        {%elif order.delivered == 1 %}
-            Preparing
-        {%elif order.delivered == 0 %}
-            Ordered
-        {%elif order.delivered == -1 %}
-            Refused order
-        {%endif%}
+        <td>
+            {%if order.delivered == 3 %}
+                On the way 
+            {%elif order.delivered == 2 %}
+                Ready for pickup
+            {%elif order.delivered == 1 %}
+                Preparing
+            {%elif order.delivered == 0 %}
+                Ordered
+            {%elif order.delivered == -1 %}
+                Refused order
+            {%endif%}
+        </td>
+        <td>
+            <a href = "{% url 'order-view' order.id %}" >
+                <button class = 'create-button' style='font-size:0.7em;'>
+                    Details
+                </button>
+            </a>
+        </td>
+        <td>
         {%if order.delivered == 4%}
         <a href = "{%url 'rating' order.id %}" >
-            <button class = 'create-button'>
+            <button class = 'create-button' style='width:140; font-size:0.7em'>
                 Leave review
             </button>
         </a>
         {%endif%}
-        <br>
-        {%endfor%}
-        <a href = "{{request.META.HTTP_REFERER}}">
-            <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
-                <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
-                &nbsp
-                Back
-            </button>
-        </a>
+        </td>
+    </tr>
+    {%endfor%}
+</table>
+
+
 </body>

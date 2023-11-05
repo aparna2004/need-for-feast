@@ -118,7 +118,7 @@ def home(request):
     context = {}
     if request.user.is_authenticated:
         if request.user.role == 'CUSTOMER':
-            order = Order.objects.all().filter(customer_id = request.user.id, delivered__lt = 4,delivered__gt = 0)
+            order = Order.objects.all().filter(customer_id = request.user.id, delivered__lt = 4,delivered__gte = 0)
             temp = CustomerProfile.objects.get(user_id = request.user.id)
             if temp.preference == "VEG":
                 items = Items.objects.all().filter(restaurant__owner__addresses__area = request.user.addresses.area, category = temp.preference ,quantity__gt=0).order_by('-rating')
@@ -347,11 +347,23 @@ def viewOrder(request,pk):
     return render(request,"base/order_view.html", {'orderitem':orderitem, 'order' : order})
 
 def orderHistory(request):
-    order = Order.objects.all().filter(customer_id = request.user.id)
+    order = Order.objects.all().filter(customer_id = request.user.id).order_by('-delivered','-created_on')
     return render(request,"base/order_history.html",{'order_list' : order})
 
 def rating(request,pk):
+    items = OrderItem.objects.all().filter(order_id = pk).select_related('items').order_by('id')
+    d = items[0].order.deliverer
+    print(d)
     if request.method == 'POST':
+        item_list = request.POST.getlist('item_list')
+        item_ratings = request.POST.getlist('item_ratings')
+        deli_rating = request.POST.get('deliverer')
+        if len(item_list) != len(item_ratings):
+            messages.error(request,'Invalid selection. Try again')
+            return render(request, 'base/rating.html', {'items' : items,'d':d} )
+        for i in range(len(item_list)):
+            item = Items.objects.get(id = item_list[i])
+        
+        print(item_ratings, deli_rating)
         return redirect('home')
-    items = OrderItem.objects.all().filter(order_id = pk).select_related('items')
-    return render(request, 'base/rating.html', {'items' : items} )
+    return render(request, 'base/rating.html', {'items' : items,'d':d} )

@@ -1,4 +1,12 @@
 {%load static %}
+
+{%if messages%}
+<ul>
+    {% for message in messages %}
+        <li>{{message}}</li>
+    {%endfor%}  
+</ul>
+{% endif %}
 <form method='POST' action=''>
     Order ID : {{items.0.order.id}}
     {%csrf_token%}
@@ -45,15 +53,18 @@
         </tr>
         {%endfor%}
     </table>
-    Deliverer:
+    <input type="checkbox" name="deliverer_select" value="{{item.pk}}"/>    
+
+    {{d.name}} 
         <input type="range" min="0" max="5" step='0.5'name='deliverer' list='markers'>
         <button class = "sub-button" style="margin-left: 128;margin-top: 20;"> Submit </button>
 
-        <a href = "{{request.META.HTTP_REFERER}}">
-            <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
-                <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
-                &nbsp
-                Back
-            </button>
-        </a>
+        
 </form>
+<a href = "{%url 'order-history'%}">
+    <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+        <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
+        &nbsp
+        Back
+    </button>
+</a>

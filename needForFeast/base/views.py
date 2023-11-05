@@ -118,7 +118,7 @@ def home(request):
     context = {}
     if request.user.is_authenticated:
         if request.user.role == 'CUSTOMER':
-            order = Order.objects.all().filter(customer_id = request.user.id, delivered__lt = 4)
+            order = Order.objects.all().filter(customer_id = request.user.id, delivered__lt = 4,delivered__gt = 0)
             temp = CustomerProfile.objects.get(user_id = request.user.id)
             if temp.preference == "VEG":
                 items = Items.objects.all().filter(restaurant__owner__addresses__area = request.user.addresses.area, category = temp.preference ,quantity__gt=0).order_by('-rating')

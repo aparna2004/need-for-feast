@@ -96,7 +96,7 @@ body{
     font-size: 40px;
     font-weight: 600;
     margin-left: 520;
-    padding-left: 310;
+    /* padding-left: 310; */
     background-image: repeating-radial-gradient(circle closest-corner at 100px 100px, #553c9a, #ee4b2b 10%, #553c9a 20%);
     color: transparent;
     background-clip: text;
@@ -384,3 +384,9 @@ body{
     line-height:0
   }
 
+  .bg{
+    background-image: url('../images/order.jpg'); 
+    background-size: 100% 100%;
+    opacity: 80%;
+    height:100vh;
+  }

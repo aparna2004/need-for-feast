@@ -1,29 +1,57 @@
 {%load static%}
-<body style="background-image: url(../static/images/food.jpg);">
-    <div style = "background-image: url(../static/images/white.jpg);background-size:20% 100%;">
-        <table style="display: flex;justify-content: center;margin-top: 80;font-size:x-large;line-height: 50px;border-spacing: 50px 0;;color: #000000;font-weight: bolder;">
-            
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<title>Need for feast</title>
+<body style="background-image: url(../static/images/food.jpg); ">
+        <a href = '/'>
+            <img src = " {%static 'images/transparent_black.png'%}" class = 'logo'>
+        </a>
+        <table class='pending-table' style='margin-top:40px; align-items: center ; width:1000px'>
             <tr>
                 <th> Name </th>
                 <th> Description </th>
                 <th> Rating </th>
                 <th> Area</th>
+                <th> </th>
 
             </tr>
 
             {% for item in restaurant %}
                 <tr>
                     <td>
-                        <a href="{% url 'order' item.pk %}">{{item.name1}}</a>
+                        <img class="menu-item-image" src="{{item.image.url }}" width="100px" height="60px" style='padding-left:20px;'/> 
                     </td>
                     <td>{{item.description}}</td>
-                    <td>{{item.rating}} </td>
+                    <td>
+                            <span>
+                            {%with r=item.rating%}
+                            <i class="fa fa-star{% if r == 0.5 %}-half-o{% elif r < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                        
+                            <i class="fa fa-star{% if r == 1.5 %}-half-o{% elif r < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                        
+                            <i class="fa fa-star{% if r == 2.5 %}-half-o{% elif r < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                        
+                            <i class="fa fa-star{% if r == 3.5 %}-half-o{% elif r < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                        
+                            <i class="fa fa-star{% if r == 4.5 %}-half-o{% elif r < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                            </span>
+                            {%endwith%}
+                        </td>
                     <td>{{item.owner.addresses.area}}</td>
+                    <td> 
+                        <a href = "{% url 'order' item.pk %}">
+                            <button class = 'create-button' style='margin-top :0; width : 50'>
+                                <i class="fa fa-lg fa-hand-o-left" aria-hidden="true"></i>
+                            </button> 
+                        </a> 
 
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
-    </div>
     
 </body>
 

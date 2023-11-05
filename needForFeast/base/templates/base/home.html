@@ -75,7 +75,7 @@
             </p> 
             <div class="home-details">
                 {%if request.user.role == 'OWNER' %}
-                    Rating : 
+                    Rating of {{request.user.restaurant.name1}}: 
                     <span>
                         {%with r=request.user.restaurant.rating%}
                         <i class="fa fa-star{% if r == 0.5 %}-half-o{% elif r < 1 %}-o {% endif %}" aria-hidden="true"></i>
@@ -89,6 +89,7 @@
                         <i class="fa fa-star{% if r == 4.5 %}-half-o{% elif r < 5 %}-o {% endif %}" aria-hidden="true"></i>
                         </span>
                         {%endwith%}
+                    <br>
                     <a href = "{% url 'create_item' %}">
                         <button class = 'login-button' style='width : 100px ;'>
                             <i class="fa fa-plus" aria-hidden="true"></i>
@@ -97,37 +98,72 @@
                     </a>
                     {%if order_list%}
                         <p> Pending orders</p>
+                        <table class='pending-table' style='margin-left:500px'>
+                            <tr>
+                                <th>Order ID </th>
+                                <th> Time</th>
+                                <th> </th>
+
+                            </tr>
                         {%for order in order_list%}
-                            <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
-                            <a href = "{% url 'order-view' order.id %}" >
-                                <button class = 'create-button'>
-                                    Details
-                                </button>
-                            </a>
+                            <tr>
+                                <td>
+                                    {{order.pk}}
+                                </td>
+                                <td> 
+                                    {{order.created_on|timesince}} ago
+                                </td>
+                                <td>
+                                    <a href = "{% url 'order-view' order.id %}" >
+                                        <button class = 'create-button'>
+                                            Details
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
                         {%endfor%}
+                        </table>
                     {%endif%}
 
                     {%if cooking%}
                         <p> Cooking orders</p>
                         <form action="" method='POST'>
                             {%csrf_token%}
-                            {%for order in cooking%}
-                                <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
-                                <a href = "{% url 'order-view' order.id %}" >
-                                    <button class = 'create-button'>
-                                        Details
-                                    </button>
-                                </a>
-                                
-                                <input type="checkbox" name="send_list" value="{{order.pk}}"/>
-                                
-                            {%endfor%}
+                            <table class='pending-table' style='margin-left:440px'>
+                                <tr>
+                                    <th>Order ID </th>
+                                    <th> Time</th>
+                                    <th> </th>
+                                    <th> </th>
+                                </tr>
+                            
+                                {%for order in cooking%}
+                                    <tr>
+                                        <td>
+                                            {{order.pk}}
+                                        </td>
+                                        <td>
+                                            {{order.created_on|timesince}} ago
+                                        </td>
+                                        <td>
+                                            <a href = "{% url 'order-view' order.id %}" >
+                                                <button class = 'create-button'>
+                                                    Details
+                                                </button>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="send_list" value="{{order.pk}}"/>
+                                        </td>
+                                    </tr>
+                                {%endfor%}
+                                </table>
                             <input type='submit' name='Send' value='Send to delivery' style='width:150'/>
                         </form>
                     {%endif%}
 
                     <br>
-                    <table class = "pending-table">
+                    <table class = "pending-table" >
                         <tr>
 
                             <th> Image </th>
@@ -199,37 +235,56 @@
                         </button>
                     </a>
                     
-
-
-                    
                     {%if order_list%}
-                        <p> Pending orders</p>
+                    <p> Pending orders</p>
+                        <table class='pending-table'>
+                            <tr>
+                                <th> Order ID</th>
+                                <th> Time</th>
+                                <th> Status</th>
+                                <th> </th>
+
+                            </tr>
+                            
+                        
                         {%for order in order_list%}
-                            <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
-                            <a href = "{% url 'order-view' order.id %}" >
-                                <button class = 'create-button'>
-                                    Details
-                                </button>
-                            </a>
+                        <tr>
+                            <td>
+                                {{order.pk}}
+                            </td>
+                            <td>
+                                {{order.created_on|timesince}} ago
+                            </td>
+                            
                             {% comment %} # 0 - ordered
                             # -1 - refused order
                             # 1 - preparing
                             # 2 - ready for pickup
                             # 3 - on the way
                             # 4 - delivered {% endcomment %}
-                            
-                            {%if order.delivered == 3 %}
-                                On the way 
-                            {%elif order.delivered == 2 %}
-                                Ready for pickup
-                            {%elif order.delivered == 1 %}
-                                Preparing
-                            {%elif order.delivered == 0 %}
-                                Ordered
-                            {%elif order.delivered == -1 %}
-                                Refused order
-                            {%endif%}
+                            <td>
+                                {%if order.delivered == 3 %}
+                                    On the way 
+                                {%elif order.delivered == 2 %}
+                                    Ready for pickup
+                                {%elif order.delivered == 1 %}
+                                    Preparing
+                                {%elif order.delivered == 0 %}
+                                    Ordered
+                                {%elif order.delivered == -1 %}
+                                    Refused order
+                                {%endif%}
+                            </td>
+                            <td>
+                                <a href = "{% url 'order-view' order.id %}" >
+                                    <button class = 'create-button'>
+                                        Details
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
                         {%endfor%}
+                    </table>
                     {%endif%}
 
                 <div>
@@ -287,84 +342,115 @@
                     {% if available%}
                     <br>
                         List of available orders
+                        <table>
+                            <tr>
+
+                                <th> Order ID </th>
+                                <th> Restaurant name</th>
+                                <th> Restaurant address</th>
+                                <th> Restaurant contact  </th> 
+                                <th> Customer name </th>
+                                <th> Customer address </th>
+                                <th>  Customer contact </th>
+                                <th> </th>
+                                <th> </th>
+                            </tr>
                         <form action='' method='POST'>
                             {%csrf_token%}
 
                         {%for order in available%}
-                            <div>
-                                Order ID = {{order.pk}}
-                            </div>
-                            <div>
-                                Pick-up restaurant name:{{order.restaurant.name1}}
-                            </div>
+                        <tr>
+                            <td>
+                                {{order.pk}}
+                            </td>
+                            <td>
+                                {{order.restaurant.name1}}
+                            </td>
 
-                            <div>
-                                Pick-up restaurant address : {{order.restaurant.owner.addresses.address}}
-                            </div>
-                            <div>
-                                Pick-up restaurant contact : 
+                            <td>
+                                {{order.restaurant.owner.addresses.address}}
+                            </td>
+                            <td>
                                 {%for pn in order.restaurant.owner.phonenumbers_set.all %}
                                 {{pn}} &nbsp
                                 {%endfor%}
-                            </div>
-                            <div>
-                                Delivery customer name : {{order.customer.name}}
-                            </div>
-                            <div>
-                                Delivery customer address : {{order.customer.addresses.address}}
-                            </div>
-                            <div>
-                                Delivery customer contact :
+                            </td>
+                            <td>
+                                {{order.customer.name}}
+                            </td>
+                            <td>
+                                {{order.customer.addresses.address}}
+                            </td>
+                            <td>
                                 {%for pn in order.customer.phonenumbers_set.all %}
                                 {{pn}} &nbsp
                                 {%endfor%}
-                            </div>
+                            </td>
+                            <td>
                             <input type="checkbox" name="deliver_list" value="{{order.pk}}"/>
-
+                            </td>
+                        </tr>
                         {%endfor%}
-                        
+                    </table>    
                         <input type='submit' name='Picked' value='Pick up' style='width:150'/>
 
                     {%endif%}
 
                     {% if picked%}
                     <br>
-                        List of available orders
+                        To be delivered
+                        <table>
+                            <tr>
+
+                                <th> Order ID </th>
+                                <th> Restaurant name</th>
+                                <th> Restaurant address</th>
+                                <th> Restaurant contact  </th> 
+                                <th> Customer name </th>
+                                <th> Customer address </th>
+                                <th>  Customer contact </th>
+                                <th> </th>
+                                <th> </th>
+                            </tr>
+                        
                         <form action='' method='POST'>
                             {%csrf_token%}
-                        {%for order in picked%}
-                            <div>
-                                Order ID = {{order.pk}}
-                            </div>
-                            <div>
-                                Pick-up restaurant name:{{order.restaurant.name1}}
-                            </div>
+                            
+                                {%for order in picked%}
+                                <tr>
+                            <td>
+                                {{order.pk}}
+                            </td>
+                            <td>
+                                {{order.restaurant.name1}}
+                            </td>
 
-                            <div>
-                                Pick-up restaurant address : {{order.restaurant.owner.addresses.address}}
-                            </div>
-                            <div>
-                                Pick-up restaurant contact : 
+                            <td>
+                                {{order.restaurant.owner.addresses.address}}
+                            </td>
+                            <td>
                                 {%for pn in order.restaurant.owner.phonenumbers_set.all %}
                                 {{pn}} &nbsp
                                 {%endfor%}
-                            </div>
-                            <div>
-                                Delivery customer name : {{order.customer.name}}
-                            </div>
-                            <div>
-                                Delivery customer address : {{order.customer.addresses.address}}
-                            </div>
-                            <div>
-                                Delivery customer contact :
+                            </td>
+                            <td>
+                                {{order.customer.name}}
+                            </td>
+                            <td>
+                                {{order.customer.addresses.address}}
+                            </td>
+                            <td>
                                 {%for pn in order.customer.phonenumbers_set.all %}
                                 {{pn}} &nbsp
                                 {%endfor%}
-                            </div>
-                            <input type="checkbox" name="drop_list" value="{{order.pk}}"/>
-
+                            </td>
+                            <td>
+                                <input type="checkbox" name="drop_list" value="{{order.pk}}"/>
+                            </td>
+                        </tr>
                         {%endfor%}
                         
+                    </table>
                         <input type='submit' name='Dropped' value='Delivered' style='width:150'/>
 
                     {%endif%}

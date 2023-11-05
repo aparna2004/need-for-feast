@@ -167,7 +167,7 @@ class Items(models.Model):
 class Order(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],null=True)
     items = models.ManyToManyField(Items, related_name="placed", through='OrderItem')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
@@ -186,6 +186,8 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     items = models.ForeignKey(Items, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],null=True)
+
     def __str__(self):
         return f"{self.order} with {self.items} {self.quantity=}"
 

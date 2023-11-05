@@ -22,7 +22,7 @@
         </tr>
         {%for item in items%}
         <tr>
-            <td>  <input type="checkbox" name="item_list" value="{{item.pk}}" /> </td>
+            <td>  <input type="checkbox" name="item_list" value="{{item.items.pk}}" /> </td>
 
 
             <td> <img class="menu-item-image" src="{{item.items.image.url }}" width="60px" height="60px"/> </td>

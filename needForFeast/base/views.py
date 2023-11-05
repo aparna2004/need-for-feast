@@ -125,7 +125,7 @@ def home(request):
             else:
                 items = Items.objects.all().filter(restaurant__owner__addresses__area = request.user.addresses.area,quantity__gt=0  ).order_by('-rating')
 
-            print(items.query)
+            #print(items.query)
             context['items'] = items
             context['order_list'] = order
         elif request.user.role == 'DELIVERER':
@@ -353,7 +353,6 @@ def orderHistory(request):
 def rating(request,pk):
     items = OrderItem.objects.all().filter(order_id = pk).select_related('items').order_by('id')
     d = items[0].order.deliverer
-    print(d)
     if request.method == 'POST':
         item_list = request.POST.getlist('item_list')
         item_ratings = request.POST.getlist('item_ratings')
@@ -362,8 +361,13 @@ def rating(request,pk):
             messages.error(request,'Invalid selection. Try again')
             return render(request, 'base/rating.html', {'items' : items,'d':d} )
         for i in range(len(item_list)):
-            item = Items.objects.get(id = item_list[i])
-        
+            mod = OrderItem.objects.get(order_id = pk, items_id = item_list[i])
+            mod.rating = float(item_ratings[i])
+            mod.save()
+        o = Order.objects.get(id=pk)
+        o.delivered = 5
+        o.rating = float(deli_rating)
+        o.save()
         print(item_ratings, deli_rating)
         return redirect('home')
     return render(request, 'base/rating.html', {'items' : items,'d':d} )

@@ -6,7 +6,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 body{
-    margin:0px;    
+    margin:0px;  
 }
 .order-link{
     /* background-color: #f8c82ce7;
@@ -95,7 +95,8 @@ body{
   .header {
     font-size: 40px;
     font-weight: 600;
-    margin-left: 515;
+    margin-left: 520;
+    padding-left: 310;
     background-image: repeating-radial-gradient(circle closest-corner at 100px 100px, #553c9a, #ee4b2b 10%, #553c9a 20%);
     color: transparent;
     background-clip: text;
@@ -119,7 +120,19 @@ body{
   }
 
   .order-confirm-body{
-    background-color: #553c9a;
+    background-color: #ffffff;
+    font-size:x-large;
+    line-height: 50px;
+    padding-left: 800;
+    padding-top: 50;
+    background-image: url("../images/billing.jpg");
+    background-size: 100% 100%;
+    color: #ccc;
+}
+
+  .order-confirm-table{
+    font-size:x-large;
+    line-height: 50px;
   }
 
   input:not([type="submit"],[type="number"])  {
@@ -370,4 +383,4 @@ body{
     display:block;
     line-height:0
   }
-  
+

@@ -10,7 +10,7 @@
 
 <body class="order-confirm-body">
     <p>Please verify your order:</p>
-    <table>
+    <table class = "order-confirm-table">
         <tr>
             <th> Item Name </th>
             <th> Price </th> 
@@ -31,16 +31,16 @@
             </tr>
     </table>
     
-    <a href="{%url 'delete-order' order.pk%}"> Change order</a>
+    <a href="{%url 'delete-order' order.pk%}" style="color: red;"> Change order</a>
     <br>
-    <a href="{%url 'order' temp %}"> Place another order</a>
+    <a href="{%url 'order' temp %}" style="color: red;"> Place another order</a>
     <br>
-    <a href="{%url 'home'%}"> Home</a>
+    <a href="{%url 'home'%}" style="color: red;"> Home</a>
     <br><br><br>
     Developed by  
-    <a href="https://github.com/Hariish-A">Hariish A</a>
+    <a href="https://github.com/Hariish-A" style="color: rgb(0, 255, 170);">Hariish A</a>
     and
-    <a href="https://github.com/hajay180505">Ajay H</a>
+    <a href="https://github.com/hajay180505" style="color: rgb(0, 255, 170);">Ajay H</a>
 </body>
 
 

@@ -1,23 +1,29 @@
+{%load static%}
+<body style="background-image: url(../static/images/food.jpg);">
+    <div style = "background-image: url(../static/images/white.jpg);background-size:20% 100%;">
+        <table style="display: flex;justify-content: center;margin-top: 80;font-size:x-large;line-height: 50px;border-spacing: 50px 0;;color: #000000;font-weight: bolder;">
+            
+            <tr>
+                <th> Name </th>
+                <th> Description </th>
+                <th> Rating </th>
+                <th> Area</th>
 
-<table>
-    <tr>
-        <th> Name </th>
-        <th> Description </th>
-        <th> Rating </th>
-        <th> Area</th>
+            </tr>
 
-    </tr>
+            {% for item in restaurant %}
+                <tr>
+                    <td>
+                        <a href="{% url 'order' item.pk %}">{{item.name1}}</a>
+                    </td>
+                    <td>{{item.description}}</td>
+                    <td>{{item.rating}} </td>
+                    <td>{{item.owner.addresses.area}}</td>
 
-    {% for item in restaurant %}
-        <tr>
-            <td>
-                <a href="{% url 'order' item.pk %}">{{item.name1}}</a>
-            </td>
-            <td>{{item.description}}</td>
-            <td>{{item.rating}} </td>
-            <td>{{item.owner.addresses.area}}</td>
-
-        </tr>
-    {% endfor %}
-</table>
+                </tr>
+                {% endfor %}
+            </table>
+    </div>
+    
+</body>
 

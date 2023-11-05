@@ -35,7 +35,7 @@ body{
     float: right;
     
 } 
-
+/* 
 .login-button{
     background-color: rgb(0, 0, 0);
     color: white;
@@ -45,7 +45,7 @@ body{
     border-radius: 2px;
     cursor:pointer;
     margin-right: 8px;
-  }
+  } */
 
   .logo{
     height: 40px;
@@ -255,3 +255,119 @@ body{
     cursor: pointer;
     margin-left: 8px;
   }
+
+  
+  
+  .scroll-container {
+    max-width: 1400px;
+    padding: 0 15px;
+    margin: 0 auto;
+  }
+  
+
+  
+  .cards {
+    display: grid;
+    grid-auto-columns: 100%;
+    grid-column-gap: 10px;
+    grid-auto-flow: column;
+    padding: 25px 0px;
+    list-style: none;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 15%);
+    scroll-snap-align: start;
+    transition: all 0.2s;
+    background-color: #ee4b2b;
+  }
+  
+  .card:hover {
+    color: white;
+    background: orange;
+  }
+  
+  .card .card-title {
+    font-size: 20px;
+  }
+  
+  .card .card-content {
+    margin: 20px 0;
+    max-width: 85%;
+  }
+  
+  .card .card-link-wrapper {
+    margin-top: auto;
+  }
+  
+  .card .card-link {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    background: orange;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  
+  .card:hover .card-link {
+    background: darkorange;
+  }
+  
+  .cards::-webkit-scrollbar {
+    height: 12px;
+  }
+  
+  .cards::-webkit-scrollbar-thumb,
+  .cards::-webkit-scrollbar-track {
+    border-radius: 92px;
+  }
+  
+  .cards::-webkit-scrollbar-thumb {
+    background: darkorange;
+  }
+  
+  .cards::-webkit-scrollbar-track {
+    background: #edf2f4;
+  }
+  
+  @media (min-width: 500px) {
+    .cards {
+      grid-auto-columns: calc(50% - 10px);
+      grid-column-gap: 20px;
+    }
+  }
+  
+  @media (min-width: 700px) {
+    .cards {
+      grid-auto-columns: calc(calc(100% / 3) - 20px);
+      grid-column-gap: 30px;
+    }
+  }
+  
+  @media (min-width: 1100px) {
+    .cards {
+      grid-auto-columns: calc(25% - 30px);
+      grid-column-gap: 40px;
+    }
+  }
+  
+  .hide{
+    background-color: #ccc !important;
+    color: white;
+    border: none !important; 
+    height: 0px !important;
+    width: 0px !important;
+    cursor: pointer;
+    font-size:0 !important;
+    display:block;
+    line-height:0
+  }
+  

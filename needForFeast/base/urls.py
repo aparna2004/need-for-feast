@@ -16,4 +16,6 @@ urlpatterns = [
     path('update_item/<str:pk>/', views.updateItem, name = 'update-item'),
     path('delete_item/<str:pk>/', views.deleteItem, name = 'delete-item'),
     path('order_view/<str:pk>/', views.viewOrder, name='order-view'),
+    path('order_history/', views.orderHistory, name='order-history'),
+    path('rating/<str:pk>/',views.rating, name='rating')
 ]

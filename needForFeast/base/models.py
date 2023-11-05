@@ -5,7 +5,10 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 from django.db.models.signals import post_save,post_delete
 from django.dispatch import receiver
 
+import datetime
+from django.utils.timesince import timesince
 
+    
 # # Create your models here.
 # class User(AbstractUser):
 #     pass
@@ -33,6 +36,8 @@ class User(AbstractUser):
             self.role = self.base_role
             return super().save(*args, **kwargs)
 
+    def __str__(self) -> str:
+        return f"{self.name=} ,{self.email=}, {self.role=}"
 
 class OwnerManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
@@ -66,10 +71,16 @@ class PhoneNumbers(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     phone_number = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.phone_number
+
 class Addresses(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     area = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.address=}, {self.area=}"
 
 class CustomerProfile(models.Model):
     class Preferences(models.TextChoices):
@@ -106,6 +117,9 @@ class Deliverer(User):
 class DelivererProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)], default=0,null=True)
+
+    def __str__(self):
+        return f'{self.user.name} , {self.rating=}'
 
 @receiver(post_save, sender=Deliverer)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -152,16 +166,21 @@ class Items(models.Model):
 
 class Order(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     items = models.ManyToManyField(Items, related_name="placed", through='OrderItem')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='foodorder')
-    delivered = models.BooleanField(default=False)
-
+    delivered = models. IntegerField(default=0)
+    address = models.ForeignKey(Addresses, on_delete=models.DO_NOTHING, null=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     class Meta:
         ordering = ['-created_on',]
     def __str__(self) -> str:
-        return f"@ {self.created_on} ${self.amount}"
+        return f"@ {self.created_on} ${self.amount} for {self.customer.name} from {self.restaurant.name1}"
+    def get_time_diff(self):
+        return timesince(self.created_on,self.updated)   
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

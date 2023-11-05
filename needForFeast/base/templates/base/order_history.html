@@ -1,0 +1,43 @@
+
+{%for order in order_list%}
+ Order number {{order.pk}} : {{order.created_on|timesince}} ago
+<a href = "{% url 'order-view' order.id %}" >
+    <button class = 'create-button'>
+        Details
+    </button>
+</a>
+{% comment %} # 0 - ordered
+# -1 - refused order
+# 1 - preparing
+# 2 - ready for pickup
+# 3 - on the way
+# 4 - delivered {% endcomment %}
+{%if order.delivered == 4 %}
+    Delivered
+{%elif order.delivered == 3 %}
+    On the way 
+{%elif order.delivered == 2 %}
+    Ready for pickup
+{%elif order.delivered == 1 %}
+    Preparing
+{%elif order.delivered == 0 %}
+    Ordered
+{%elif order.delivered == -1 %}
+    Refused order
+{%endif%}
+{%if order.delivered == 4%}
+<a href = "{%url 'rating' order.id %}" >
+    <button class = 'create-button'>
+        Leave review
+    </button>
+</a>
+{%endif%}
+<br>
+{%endfor%}
+<a href = "{{request.META.HTTP_REFERER}}">
+    <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+        <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
+        &nbsp
+        Back
+    </button>
+</a>

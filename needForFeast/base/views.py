@@ -7,7 +7,12 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import CustomerProfile,PhoneNumbers,Addresses
 
-
+# 0 - ordered
+# -1 - refused order
+# 1 - preparing
+# 2 - ready for pickup
+# 3 - on the way
+# 4 - delivered
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -113,26 +118,50 @@ def home(request):
     context = {}
     if request.user.is_authenticated:
         if request.user.role == 'CUSTOMER':
-            order = Order.objects.all().filter(customer_id = request.user.id)
-            r = Restaurant.objects.all().filter(owner__addresses__area= request.user.addresses.area)
-            items = []
-            for restaurant in r:
-                items.append(Items.objects.all().filter(restaurant = restaurant))
-            # print(order)
-            # item_list = []
-            # for o in order:
-            #     print(o.id)
-            #     item_list.append(OrderItem.objects.all().filter(order_id = o.id).select_related('items','order'))
-            # print(item_list)
+            order = Order.objects.all().filter(customer_id = request.user.id, delivered__lt = 4)
+            temp = CustomerProfile.objects.get(user_id = request.user.id)
+            if temp.preference == "VEG":
+                items = Items.objects.all().filter(restaurant__owner__addresses__area = request.user.addresses.area, category = temp.preference ,quantity__gt=0).order_by('-rating')
+            else:
+                items = Items.objects.all().filter(restaurant__owner__addresses__area = request.user.addresses.area,quantity__gt=0  ).order_by('-rating')
+
+            print(items.query)
             context['items'] = items
-            context['r'] = r
             context['order_list'] = order
         elif request.user.role == 'DELIVERER':
-            pass
-        elif request.user.role == 'OWNER':
+            if request.method == 'POST':
+                picked = request.POST.getlist('deliver_list')
+                for i in picked:
+                    obj = Order.objects.get(id=i)
+                    obj.delivered = 3
+                    obj.deliverer = request.user
+                    obj.save()
+                delivered = request.POST.getlist('drop_list')
+                for i in delivered:
+                    obj = Order.objects.get(id=i)
+                    obj.delivered = 4
+                    obj.save()
+            available = Order.objects.all().filter(delivered = 2 , address__area = request.user.addresses.area).select_related('restaurant','customer')
+            picked = Order.objects.all().filter(delivered = 3 , address__area = request.user.addresses.area).select_related('restaurant','customer')
             
+            context['available'] = available
+            context['picked'] = picked
+        elif request.user.role == 'OWNER':
+            if request.method == 'POST':
+                print(request.POST)
+                send1 = request.POST.getlist('send_list')
+                print(send1)
+                for i in send1:
+                    order1 =  Order.objects.get(id=i)
+                    print(i, order1)
+                    order1.delivered = 2
+                    order1.save()
+            order_list = Order.objects.all().filter(restaurant__owner = request.user, delivered = 0)
             item_list = Items.objects.all().filter(restaurant__owner = request.user)
+            cooking = Order.objects.all().filter(restaurant__owner = request.user, delivered = 1)
+            context['cooking'] = cooking
             context['item_list'] = item_list
+            context['order_list'] = order_list
             pass
     return render(request, "base/home.html",context=context)
 
@@ -195,7 +224,8 @@ def order(request,pk):
                 entity['rec'].save()
 
 
-        order = Order.objects.create( customer = request.user,amount=amt)
+        order = Order.objects.create( customer = request.user,amount=amt, address = request.user.addresses, restaurant = bill[0]['rec'].restaurant)
+        print(order)
         for i in bill:
                 OrderItem.objects.create(order = order, items = i['rec'], quantity =i['qty'] )
 
@@ -223,7 +253,7 @@ def selectRole(request):
             return render(request, 'base/role_selection.html')
     return render(request,"base/role_selection.html")
 
-
+@login_required(login_url='login')
 def displayRestaurants(request):
     # print(request.user.__dir__())
     r = Restaurant.objects.all().filter(owner__addresses__area= request.user.addresses.area)
@@ -242,10 +272,11 @@ def displayRestaurants(request):
 # def delivererHome(request):
 #     context = {}
 #     return render(request, "base/deliverer_home.html", context=context)
-
+@login_required(login_url='login')
 def stats(request):
     return HttpResponse("STATISTICS for " + request.user.name)
 
+@login_required(login_url='login')
 def createItem(request):
     form = ItemForm()
 
@@ -259,6 +290,7 @@ def createItem(request):
             return redirect('home')
     return render(request, "base/item_create.html",{'form': form})
 
+@login_required(login_url='login')
 def deleteOrder(request,pk):
 
     orderitem = OrderItem.objects.all().filter(order_id = pk).select_related('items')
@@ -275,6 +307,7 @@ def deleteOrder(request,pk):
         return redirect('restaurant-list')
     return render(request,'base/delete_order.html',{"obj" : order,"rel" : orderitem})
 
+@login_required(login_url='login')
 def updateItem(request,pk):
     item = Items.objects.get(id = pk)
     form = ItemForm(instance= item)
@@ -287,6 +320,7 @@ def updateItem(request,pk):
             return redirect('home')
     return render(request, "base/item_create.html",{'form': form})
 
+@login_required(login_url='login')
 def deleteItem(request,pk):
     item = Items.objects.get(id = pk)
     if request.method == 'POST':
@@ -294,8 +328,30 @@ def deleteItem(request,pk):
         return redirect('home')
     return render(request,'base/delete_item.html',{"item" : item})
 
-
+@login_required(login_url='login')  
 def viewOrder(request,pk):
     orderitem = OrderItem.objects.all().filter(order_id = pk).select_related('items','order')
     order = Order.objects.get(id=pk)
+
+    if request.method == 'POST':
+        if request.user.role == 'OWNER':
+            print(request.POST)
+            if 'accept' in request.POST:
+                order.delivered = 1
+            elif 'refuse' in request.POST:
+                order.delivered = -1
+            order.save()
+            return redirect('home')
+        
+    
     return render(request,"base/order_view.html", {'orderitem':orderitem, 'order' : order})
+
+def orderHistory(request):
+    order = Order.objects.all().filter(customer_id = request.user.id)
+    return render(request,"base/order_history.html",{'order_list' : order})
+
+def rating(request,pk):
+    if request.method == 'POST':
+        return redirect('home')
+    items = OrderItem.objects.all().filter(order_id = pk).select_related('items')
+    return render(request, 'base/rating.html', {'items' : items} )

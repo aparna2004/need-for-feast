@@ -44,13 +44,32 @@
             {% endfor %}
         </table>
         <p> Amount: {{order.amount}} </p>
+        {%if request.user.role == 'CUSTOMER' %}
         <div>
-            {%if order.delivered%}
+            {%if order.delivered == 4 %}
                 Delivered
+            {%elif order.delivered == 3 %}
+                On the way 
+            {%elif order.delivered == 2 %}
+                Ready for pickup
+            {%elif order.delivered == 1 %}
+                Preparing
+            {%elif order.delivered == 0 %}
+                Ordered
             {%else%}
-                Pending delivery 
+                Refused order
             {%endif%}
         </div>
+
+        {%elif request.user.role == 'OWNER' and order.delivered == 0 %}
+
+        <form method='POST'>
+            {% csrf_token %}
+            <input type='submit' name='accept' value='Accept'/>
+            <input type='submit' name='refuse' value='Refuse'/>
+        </form>
+
+        {%endif%}
         <div>
             {{order.created_on|timesince}} ago
         </div>

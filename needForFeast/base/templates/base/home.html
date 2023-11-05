@@ -30,40 +30,41 @@
         </ul>
         {% endif %}
 
-        
-
-        
-            {% if request.user.is_authenticated %}  
+        {% if request.user.is_authenticated %}  
             <div class="home-content-wrapper">
                 <span>
-                    {%if request.user.role == 'OWNER' %}
+                {%if request.user.role == 'OWNER' %}
 
                     <a href = "{% url 'stats'%}">
-                        <button class = 'create-button'>
+                        <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+                            <i class="fa fa-lg fa-bar-chart" aria-hidden="true"></i> 
                             View stats
                         </button>
                     </a>
-                    {%elif request.user.role == 'CUSTOMER' %}
+                {%elif request.user.role == 'CUSTOMER' %}
                     
                     <a href = "{% url 'restaurant-list'%}">
                         <button class = 'create-button'>
+                            <i class="fa fa-cutlery" aria-hidden="true"></i>
                             Place order
                         </button>
                     </a>
 
-                    {%elif request.user.role == 'DELIVERER' %}
+                {%elif request.user.role == 'DELIVERER' %}
 
                     <a href = "{% url 'stats'%}">
-                        <button class = 'create-button'>
+                        <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+                            <i class="fa fa-lg fa-bar-chart" aria-hidden="true"></i>
                             View stats
                         </button>
                     </a>
 
-                    {%endif%}
+                {%endif%}
                 </span>
 
                 <a href = "{% url 'logout' %}">
-                    <button class = 'login-button'>
+                    <button class = 'login-button' >
+                        <!--<i class='fa fa-lg fa-sign-out'></i> -->
                         Logout
                     </button>
                 </a>
@@ -74,12 +75,58 @@
             </p> 
             <div class="home-details">
                 {%if request.user.role == 'OWNER' %}
+                    Rating : 
+                    <span>
+                        {%with r=request.user.restaurant.rating%}
+                        <i class="fa fa-star{% if r == 0.5 %}-half-o{% elif r < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 1.5 %}-half-o{% elif r < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 2.5 %}-half-o{% elif r < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 3.5 %}-half-o{% elif r < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 4.5 %}-half-o{% elif r < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                        </span>
+                        {%endwith%}
                     <a href = "{% url 'create_item' %}">
                         <button class = 'login-button' style='width : 100px ;'>
+                            <i class="fa fa-plus" aria-hidden="true"></i>
                             Add item
                         </button>
                     </a>
+                    {%if order_list%}
+                        <p> Pending orders</p>
+                        {%for order in order_list%}
+                            <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
+                            <a href = "{% url 'order-view' order.id %}" >
+                                <button class = 'create-button'>
+                                    Details
+                                </button>
+                            </a>
+                        {%endfor%}
+                    {%endif%}
 
+                    {%if cooking%}
+                        <p> Cooking orders</p>
+                        <form action="" method='POST'>
+                            {%csrf_token%}
+                            {%for order in cooking%}
+                                <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
+                                <a href = "{% url 'order-view' order.id %}" >
+                                    <button class = 'create-button'>
+                                        Details
+                                    </button>
+                                </a>
+                                
+                                <input type="checkbox" name="send_list" value="{{order.pk}}"/>
+                                
+                            {%endfor%}
+                            <input type='submit' name='Send' value='Send to delivery' style='width:150'/>
+                        </form>
+                    {%endif%}
+
+                    <br>
                     <table class = "pending-table">
                         <tr>
 
@@ -89,6 +136,7 @@
                             <th> Price </th> 
                             <th> Offer </th>
                             <th> Quantity </th>
+                            <th> Rating </th>
                             <th> </th>
                             <th> </th>
                         </tr>
@@ -107,20 +155,35 @@
                                 <td> {{item.price|floatformat:"0"}} </td>
                                 <td> {{item.offer}} </td>
                                 <td > {{item.quantity}}</td>
+                                <td>
+                                    <span>
+                                        <i class="fa fa-star{% if item.rating == 0.5 %}-half-o{% elif item.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 1.5 %}-half-o{% elif item.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 2.5 %}-half-o{% elif item.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 3.5 %}-half-o{% elif item.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 4.5 %}-half-o{% elif item.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                        </span>
+
+                                </td>
                                 <td> 
                                     <a href = "{% url 'update-item' item.id %}">
-                                        <!-- <button class = 'create-button'>
-                                            Edit
-                                        </button> -->
-                                        <i class="far fa-edit"></i>
+                                        <button class = 'create-button' style='margin-top :0; width : 50'>
+                                        <i class="fa fa-lg fa-pencil-square-o" aria-hidden="true"></i>
+                                        </button> 
+                                        <!--<i class="far fa-edit"></i>-->
+
                                     </a> 
                                 </td>
                                 <td> 
                                     <a href = "{% url 'delete-item' item.id %}">
-                                        <!-- <button class = 'login-button' style='margin-top :0;'>
-                                            Delete
-                                        </button> -->
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <button class = 'login-button' style='margin-top :0; width : 50'>
+                                            <i class="fa fa-lg fa-trash-o" aria-hidden="true" style=''></i>
+                                            
+                                        </button>
                                     </a> 
 
                                 </td>
@@ -130,35 +193,184 @@
                     </table>
     
                 {%elif request.user.role == 'CUSTOMER' %}
-                    <p> Pending orders</p>
-                    {%for order in order_list%}
-                        <p> Order number {{forloop.counter}} : {{order.created_on|timesince}} ago</p>
-                        <a href = "{% url 'order-view' order.id %}" >
-                            <button class = 'create-button'>
-                                Details
-                            </button>
-                        </a>
+                    <a href = "{% url 'order-history'  %}">
+                        <button class = 'login-button' style='margin-top :0; width : 150'>
+                            Order history                            
+                        </button>
+                    </a>
+                    
 
-                        {%if order.delivered%}
-                            Delivered
-                        {%else%}
-                            Pending delivery 
-                        {%endif%}
-                    {%endfor%}
+
+                    
+                    {%if order_list%}
+                        <p> Pending orders</p>
+                        {%for order in order_list%}
+                            <p> Order number {{order.pk}} : {{order.created_on|timesince}} ago</p>
+                            <a href = "{% url 'order-view' order.id %}" >
+                                <button class = 'create-button'>
+                                    Details
+                                </button>
+                            </a>
+                            {% comment %} # 0 - ordered
+                            # -1 - refused order
+                            # 1 - preparing
+                            # 2 - ready for pickup
+                            # 3 - on the way
+                            # 4 - delivered {% endcomment %}
+                            
+                            {%if order.delivered == 3 %}
+                                On the way 
+                            {%elif order.delivered == 2 %}
+                                Ready for pickup
+                            {%elif order.delivered == 1 %}
+                                Preparing
+                            {%elif order.delivered == 0 %}
+                                Ordered
+                            {%elif order.delivered == -1 %}
+                                Refused order
+                            {%endif%}
+                        {%endfor%}
+                    {%endif%}
 
                 <div>
-                    {% comment %} Recommendations
-                    {%for item_container in items%}
-                    {{r.forloop.count0}}
-
-                    {%endfor%} {% endcomment %}
+                    Recommendations
+                    <div class="scroll-container">
+                        <ul class="cards">
+                            {%for item in items%}
+                            <li class="card">
+                            <div>
+                                <h3 class="card-title">{{item.name}} at {{item.restaurant.name1}}</h3>
+                                <div class="card-content">
+                                    <img src="{{item.image.url }}" width="60px" height="60px">
+                                    <br>
+                                    <span>
+                                        <i class="fa fa-star{% if item.rating == 0.5 %}-half-o{% elif item.rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 1.5 %}-half-o{% elif item.rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 2.5 %}-half-o{% elif item.rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 3.5 %}-half-o{% elif item.rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                                    
+                                        <i class="fa fa-star{% if item.rating == 4.5 %}-half-o{% elif item.rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="card-link-wrapper">
+                              <a href="{% url 'order' item.restaurant.pk %}" class="card-link">Order</a>
+                            </div>
+                          </li>
+                          {%endfor%} 
+                        </ul>
+                      </div>
+                      
 
                 </div>
             
 
                 {%elif request.user.role == 'DELIVERER' %}
 
-                    Delivery needs for the Restaurant and customer
+                    <p> Rating </p>
+                    <span>
+                        {%with r=request.user.delivererprofile.rating %}
+                        <i class="fa fa-star{% if r == 0.5 %}-half-o{% elif r < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 1.5 %}-half-o{% elif r < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 2.5 %}-half-o{% elif r < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 3.5 %}-half-o{% elif r < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                    
+                        <i class="fa fa-star{% if r == 4.5 %}-half-o{% elif r < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                        {%endwith%}    
+                    </span>
+                    {% if available%}
+                    <br>
+                        List of available orders
+                        <form action='' method='POST'>
+                            {%csrf_token%}
+
+                        {%for order in available%}
+                            <div>
+                                Order ID = {{order.pk}}
+                            </div>
+                            <div>
+                                Pick-up restaurant name:{{order.restaurant.name1}}
+                            </div>
+
+                            <div>
+                                Pick-up restaurant address : {{order.restaurant.owner.addresses.address}}
+                            </div>
+                            <div>
+                                Pick-up restaurant contact : 
+                                {%for pn in order.restaurant.owner.phonenumbers_set.all %}
+                                {{pn}} &nbsp
+                                {%endfor%}
+                            </div>
+                            <div>
+                                Delivery customer name : {{order.customer.name}}
+                            </div>
+                            <div>
+                                Delivery customer address : {{order.customer.addresses.address}}
+                            </div>
+                            <div>
+                                Delivery customer contact :
+                                {%for pn in order.customer.phonenumbers_set.all %}
+                                {{pn}} &nbsp
+                                {%endfor%}
+                            </div>
+                            <input type="checkbox" name="deliver_list" value="{{order.pk}}"/>
+
+                        {%endfor%}
+                        
+                        <input type='submit' name='Picked' value='Pick up' style='width:150'/>
+
+                    {%endif%}
+
+                    {% if picked%}
+                    <br>
+                        List of available orders
+                        <form action='' method='POST'>
+                            {%csrf_token%}
+                        {%for order in picked%}
+                            <div>
+                                Order ID = {{order.pk}}
+                            </div>
+                            <div>
+                                Pick-up restaurant name:{{order.restaurant.name1}}
+                            </div>
+
+                            <div>
+                                Pick-up restaurant address : {{order.restaurant.owner.addresses.address}}
+                            </div>
+                            <div>
+                                Pick-up restaurant contact : 
+                                {%for pn in order.restaurant.owner.phonenumbers_set.all %}
+                                {{pn}} &nbsp
+                                {%endfor%}
+                            </div>
+                            <div>
+                                Delivery customer name : {{order.customer.name}}
+                            </div>
+                            <div>
+                                Delivery customer address : {{order.customer.addresses.address}}
+                            </div>
+                            <div>
+                                Delivery customer contact :
+                                {%for pn in order.customer.phonenumbers_set.all %}
+                                {{pn}} &nbsp
+                                {%endfor%}
+                            </div>
+                            <input type="checkbox" name="drop_list" value="{{order.pk}}"/>
+
+                        {%endfor%}
+                        
+                        <input type='submit' name='Dropped' value='Delivered' style='width:150'/>
+
+                    {%endif%}
+
+
+
 
                 {%endif%}
             </div>
@@ -169,13 +381,17 @@
             <div class="home-content-wrapper">
 
                 <a href = "{% url 'login'%}">
-                    <button class = 'create-button'>
+                    <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+                        <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
+                        &nbsp
                         Place order
                     </button>
                 </a>
 
                 <a href = "{% url 'login' %}">
-                    <button class = 'login-button'>
+                    <button class = 'login-button' style='width : 100'>
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                        &nbsp
                         Login
                     </button>
                 </a>

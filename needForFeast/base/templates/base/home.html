@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <title>Need for feast</title>
-<body class = 'main-body' >
+<body class = 'main-body'>
     
     <div >
         
@@ -35,12 +35,12 @@
                 <span>
                 {%if request.user.role == 'OWNER' %}
 
-                    <a href = "{% url 'stats'%}">
+                    <!-- <a href = "{% url 'stats'%}">
                         <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
                             <i class="fa fa-lg fa-bar-chart" aria-hidden="true"></i> 
                             View stats
                         </button>
-                    </a>
+                    </a> -->
                 {%elif request.user.role == 'CUSTOMER' %}
                     
                     <a href = "{% url 'restaurant-list'%}">
@@ -52,12 +52,12 @@
 
                 {%elif request.user.role == 'DELIVERER' %}
 
-                    <a href = "{% url 'stats'%}">
+                    <!-- <a href = "{% url 'stats'%}">
                         <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
                             <i class="fa fa-lg fa-bar-chart" aria-hidden="true"></i>
                             View stats
-                        </button>
-                    </a>
+                        </button> -->
+                    <!-- </a> -->
 
                 {%endif%}
                 </span>
@@ -342,7 +342,7 @@
                     {% if available%}
                     <br>
                         List of available orders
-                        <table>
+                        <table class="pending-table" style="line-height: normal;font-size: large;margin-left: 60;margin-right: 60;padding-left: 40;margin-top: 20;margin-bottom: 20;">
                             <tr>
 
                                 <th> Order ID </th>
@@ -393,13 +393,13 @@
                         {%endfor%}
                     </table>    
                         <input type='submit' name='Picked' value='Pick up' style='width:150'/>
-
+                        </form>
                     {%endif%}
 
                     {% if picked%}
                     <br>
                         To be delivered
-                        <table>
+                        <table class="pending-table" style="line-height: normal;font-size: large;margin-left: 60;margin-right: 60;padding-left: 40;margin-top: 20;margin-bottom: 20;">
                             <tr>
 
                                 <th> Order ID </th>
@@ -453,6 +453,7 @@
                     </table>
                         <input type='submit' name='Dropped' value='Delivered' style='width:150'/>
 
+                </form>
                     {%endif%}
 
 

@@ -50,7 +50,6 @@ def registerCustomer(request):
         area = request.POST.get("area")
         if form.is_valid():
             user = form.save(commit=False)
-            user.name = user.name.lower()
             user.save()
             c = CustomerProfile.objects.get(user = user)
             c.preference = CustomerProfile.Preferences.VEG if pref=='veg' else CustomerProfile.Preferences.NONVEG
@@ -352,7 +351,10 @@ def orderHistory(request):
 
 def rating(request,pk):
     items = OrderItem.objects.all().filter(order_id = pk).select_related('items').order_by('id')
-    d = items[0].order.deliverer
+    if items:
+        d = items[0].order.deliverer
+    else:
+        d = None
     if request.method == 'POST':
         item_list = request.POST.getlist('item_list')
         item_ratings = request.POST.getlist('item_ratings')

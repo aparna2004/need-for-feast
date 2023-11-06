@@ -170,7 +170,7 @@ class Order(models.Model):
     rating = models.DecimalField(max_digits=3, decimal_places=2, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],null=True)
     items = models.ManyToManyField(Items, related_name="placed", through='OrderItem')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
-    deliverer = models.ForeignKey(Deliverer, on_delete=models.DO_NOTHING, null=True)
+    deliverer = models.ForeignKey(Deliverer, on_delete=models.SET_NULL, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='foodorder')
     delivered = models. IntegerField(default=0)
     address = models.ForeignKey(Addresses, on_delete=models.DO_NOTHING, null=True)

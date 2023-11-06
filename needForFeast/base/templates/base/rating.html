@@ -1,70 +1,83 @@
 {%load static %}
+<head>
+    <link rel="stylesheet" href="{%static 'styles/style.css'%}" />
+    <link rel="icon" href="{%static 'images/feast_favicon.jpg'%}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<title>Need for feast</title>
 
-{%if messages%}
-<ul>
-    {% for message in messages %}
-        <li>{{message}}</li>
-    {%endfor%}  
-</ul>
-{% endif %}
-<form method='POST' action=''>
-    Order ID : {{items.0.order.id}}
-    {%csrf_token%}
-    <table>
-        <tr>
-            <th> Select</th>
-            <th> Image </th>
-            <th> Item name</th>
-            <th> Price</th>
-            <th> Category</th>
-            <th> Rating</th>
+    <body class="order-his">
 
-        </tr>
-        {%for item in items%}
-        <tr>
-            <td>  <input type="checkbox" name="item_list" value="{{item.items.pk}}" /> </td>
+        {%if messages%}
+        <ul>
+            {% for message in messages %}
+                <li>{{message}}</li>
+            {%endfor%}  
+        </ul>
+        {% endif %}
+        {%if items%}
+        <form method='POST' action=''>
+            Order ID : {{items.0.order.id}}
+            {%csrf_token%}
+            <table class="pending-table">
+                <tr>
+                    <th> Select</th>
+                    <th> Image </th>
+                    <th> Item name</th>
+                    <th> Price</th>
+                    <th> Category</th>
+                    <th> Rating</th>
+
+                </tr>
+                {%for item in items%}
+                <tr>
+                    <td>  <input type="checkbox" name="item_list" value="{{item.items.pk}}" /> </td>
 
 
-            <td> <img class="menu-item-image" src="{{item.items.image.url }}" width="60px" height="60px"/> </td>
-                            
-                            
-            <td>{{item.items.name}} </td>
-            <td> {{item.price|floatformat:"0"}} </td>
-            <td>
-                {%if item.items.category == 'VEG' %}
-                    <img src = "{%static 'images/veg.png'%}" width='40px' height='40px'/>
-                {%else%}
-                    <img src = "{%static 'images/nonveg.png'%}" width='40px' height='40px'/>
-                {%endif%}
-            </td>
-            <td>   <input type="range" min="0" max="5" step='0.5'name='item_ratings' list='markers'>
+                    <td> <img class="menu-item-image" src="{{item.items.image.url }}" width="60px" height="60px"/> </td>
+                                    
+                                    
+                    <td>{{item.items.name}} </td>
+                    <td> {{item.price|floatformat:"0"}} </td>
+                    <td>
+                        {%if item.items.category == 'VEG' %}
+                            <img src = "{%static 'images/veg.png'%}" width='40px' height='40px'/>
+                        {%else%}
+                            <img src = "{%static 'images/nonveg.png'%}" width='40px' height='40px'/>
+                        {%endif%}
+                    </td>
+                    <td>   <input type="range" min="0" max="5" step='0.5'name='item_ratings' list='markers'>
 
-                <datalist id="markers">
-                    <option value="0"></option>
-                    <option value="1"></option>
-                    <option value="2"></option>
-                    <option value="3"></option>
-                    <option value="4"></option>
-                    <option value="5"></option>
+                        <datalist id="markers">
+                            <option value="0"></option>
+                            <option value="1"></option>
+                            <option value="2"></option>
+                            <option value="3"></option>
+                            <option value="4"></option>
+                            <option value="5"></option>
 
-                  </datalist>
-            </td>
+                        </datalist>
+                    </td>
 
-        </tr>
-        {%endfor%}
-    </table>
-    <input type="checkbox" name="deliverer_select" value="{{item.pk}}"/>    
+                </tr>
+                {%endfor%}
+            </table>
+            <input type="checkbox" name="deliverer_select" value="{{item.pk}}"/>    
+            
+        <span style="font-size: large;padding-right: 100;">    
+            {{d.name}}
+        </span> 
+                    <input type="range" min="0" max="5" step='0.5'name='deliverer' list='markers' style="margin-left: 120;background-color: red;">
+                    <button class = "sub-button" style="margin-left: 128;margin-top: 20;"> Submit </button>
 
-    {{d.name}} 
-        <input type="range" min="0" max="5" step='0.5'name='deliverer' list='markers'>
-        <button class = "sub-button" style="margin-left: 128;margin-top: 20;"> Submit </button>
-
-        
-</form>
-<a href = "{%url 'order-history'%}">
-    <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
-        <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
-        &nbsp
-        Back
-    </button>
-</a>
+                
+        </form>
+        {%endif%}
+        <a href = "{%url 'order-history'%}">
+            <button class = 'create-button' style='font-size : 1em; width : 130; margin :0'>
+                <i class="fa fa-lg fa-cutlery" aria-hidden="true"></i>
+                &nbsp
+                Back
+            </button>
+        </a>
+    </body>

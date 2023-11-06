@@ -123,11 +123,11 @@ body{
     background-color: #ffffff;
     font-size:x-large;
     line-height: 50px;
-    padding-left: 800;
+    /* padding-left: 800; */
     padding-top: 50;
     background-image: url("../images/billing.jpg");
     background-size: 100% 100%;
-    color: #ccc;
+    /* color: #ccc; */
 }
 
   .order-confirm-table{
@@ -269,6 +269,21 @@ body{
     margin-left: 8px;
   }
 
+  input[type = "checkbox"]{
+    /* background-color: rgb(163, 1, 1); */
+    color: white;
+    /* border: none; */
+    height: 18px;
+    width: 67px !important;
+    /* border-radius: 8px;
+    border-radius: 18px; */
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+
+
   
   
   .scroll-container {
@@ -300,6 +315,12 @@ body{
     scroll-snap-align: start;
     transition: all 0.2s;
     background-color: #ee4b2b;
+  }
+
+  .order-his{
+    background-image: url('../images/order.jpg');
+    background-size: 100% 100%;
+    
   }
   
   .card:hover {

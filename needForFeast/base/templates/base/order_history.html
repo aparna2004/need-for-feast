@@ -11,6 +11,8 @@
     <a href = '/'>
         <img src = " {%static 'images/transparent_black.png'%}" class = 'logo'>
     </a>
+    {%if order_list%}
+
     <table class='pending-table'>
         <tr>
             <th> Order ID</th>
@@ -68,6 +70,7 @@
     </tr>
     {%endfor%}
 </table>
+{%endif%}
 
 
 </body>

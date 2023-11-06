@@ -21,18 +21,21 @@ def update_ratings(sender,instance,created,**kwargs):
 def update_deliverer_ratings(sender,instance,created,**kwargs):
     # print(instance.__dir__())
     d = Order.objects.all().filter(id = instance.deliverer_id, rating__isnull = False)
-    og = DelivererProfile.objects.get(user_id = instance.deliverer_id)
-    if d:
-        # print(d)
-        # print('lst=',[i for i in d])
-        rate_list = [float(i.rating) for i in d]
-        print("d=",rate_list)
-        og.rating = sum(rate_list)/len(rate_list)
-        og.save()
-    else:
-        og.rating = instance.rating
-        og.save()
-    print("Triggered update deliverer rating")
+    if instance.deliverer_id:
+        og = DelivererProfile.objects.get(user_id = instance.deliverer_id)
+        
+        if d and og:
+
+            # print(d)
+            # print('lst=',[i for i in d])
+            rate_list = [float(i.rating) for i in d]
+            print("d=",rate_list)
+            og.rating = sum(rate_list)/len(rate_list)
+            og.save()
+        else:
+            og.rating = instance.rating
+            og.save()
+        print("Triggered update deliverer rating")
 
 @receiver(post_save,sender = Items)
 def update_restaurant_ratings(sender,instance,created,**kwargs):

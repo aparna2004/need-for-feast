@@ -8,9 +8,9 @@
 </head>
 
 
-<body class="order-confirm-body">
-    <p>Please verify your order:</p>
-    <table class = "order-confirm-table">
+<body class="order-confirm-body" style="display: flex;justify-content: center;align-items: center;flex-direction: column;">
+    <p style="color: white;">Please verify your order:</p>
+    <table class = "pending-table"style="margin-left:0">
         <tr>
             <th> Item Name </th>
             <th> Price </th> 
@@ -30,17 +30,33 @@
                 <td>{{amount}}</td>
             </tr>
     </table>
-    
-    <a href="{%url 'delete-order' order.pk%}" style="color: red;"> Change order</a>
     <br>
-    <a href="{%url 'order' temp %}" style="color: red;"> Place another order</a>
+    <a href="{%url 'delete-order' order.pk%}" style="color: red;">
+        
+        <button class="sub-button" style="width: 150;background-color: black;" >    
+        Change order
+        </button>
+    </a>
     <br>
-    <a href="{%url 'home'%}" style="color: red;"> Home</a>
+    <a href="{%url 'order' temp %}" style="color: red;">
+        <button class="sub-button" style="width: 220;background-color: black;" > 
+        Place another order
+        </button>
+    </a>
+    <br>
+    <a href="{%url 'home'%}" style="color: red;"> 
+        <button class="sub-button" style="width: 150;background-color: black;" > 
+        Home
+        </button>
+    </a>
     <br><br><br>
+   <span style="color: aliceblue;">
     Developed by  
+   
     <a href="https://github.com/Hariish-A" style="color: rgb(0, 255, 170);">Hariish A</a>
     and
     <a href="https://github.com/hajay180505" style="color: rgb(0, 255, 170);">Ajay H</a>
+    </span>
 </body>
 
 

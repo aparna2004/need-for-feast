@@ -25,6 +25,7 @@ pip install -r requirements.txt
 ```
 4. Set up the database
 ```bash
+cd needForFeast
 python manage.py makemigrations
 python manage.py migrate
 ```
